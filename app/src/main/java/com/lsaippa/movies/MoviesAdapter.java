@@ -60,7 +60,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesAdap
         if(moviesDate==null){
             return 0;
         }
-        return 4;
+        return moviesDate.getTotal_results();
     }
 
 
