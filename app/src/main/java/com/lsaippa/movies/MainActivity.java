@@ -1,8 +1,6 @@
 package com.lsaippa.movies;
 
 import android.content.Context;
-import android.graphics.Movie;
-import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -23,8 +21,6 @@ import com.lsaippa.movies.model.Movies;
 import com.lsaippa.movies.utilities.NetworkUtils;
 
 import java.net.URL;
-import java.util.Arrays;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements MoviesAdapter.MoviesAdapterOnClickHandler {
 
@@ -66,7 +62,35 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
 
     private void loadMovies() {
 
-        new FetchMoviesTask().execute();
+        URL moviesRequestUrl = NetworkUtils.buildURL(NetworkUtils.ENDPOINT_TOP_RATED_MOVIES);
+
+        RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
+
+
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, moviesRequestUrl.toString(), new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+                Movies movies = gson.fromJson(response, Movies.class);
+
+
+                Log.i("Movies", movies + " posts loaded.");
+
+                moviesAdapter.setMoviesDate(movies);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+                Log.d(TAG,"onError " + error);
+            }
+        });
+
+
+        queue.add(stringRequest);
+
+
+
     }
 
     @Override
@@ -74,55 +98,6 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
         //Todo add new activity
         Toast.makeText(mContext, "Go new activity! ", Toast.LENGTH_SHORT).show();
     }
-
-
-    public class FetchMoviesTask extends AsyncTask<Void,Void,Movies>{
-
-
-        //Todo modifies to return correctly in a list
-        Movies movies = null;
-        @Override
-        protected Movies doInBackground(Void... voids) {
-            URL moviesRequestUrl = NetworkUtils.buildURL(NetworkUtils.ENDPOINT_TOP_RATED_MOVIES);
-
-            RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
-
-            StringRequest stringRequest = new StringRequest(Request.Method.GET, moviesRequestUrl.toString(), new Response.Listener<String>() {
-                @Override
-                public void onResponse(String response) {
-
-                   movies = gson.fromJson(response, Movies.class);
-
-
-                    Log.i("Movies", movies + " posts loaded.");
-
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-
-                    Log.d(TAG,"onError " + error);
-                }
-            });
-
-
-            queue.add(stringRequest);
-
-
-            while (movies == null){
-
-            }
-            return movies;
-        }
-
-        @Override
-        protected void onPostExecute(Movies movies) {
-            super.onPostExecute(movies);
-            moviesAdapter.setMoviesDate(movies);
-        }
-    }
-
-
 
 
 }
