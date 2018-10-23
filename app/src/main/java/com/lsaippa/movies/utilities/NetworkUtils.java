@@ -14,6 +14,7 @@ import java.net.URL;
 
 public class NetworkUtils {
 
+    public static final String TAG = NetworkUtils.class.getSimpleName();
     //Ex: https://api.themoviedb.org/3/movie/popular?api_key
 
 
@@ -25,6 +26,7 @@ public class NetworkUtils {
 
     public static final String ENDPOINT_TOP_RATED_MOVIES = "/movie/top_rated";
 
+    public static final String IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w185/";
 
 
     public static URL buildURL(String type){
@@ -46,8 +48,29 @@ public class NetworkUtils {
         }
 
 
-        Log.d("TESTE URL ","Teste "+  builtUri.toString());
+        Log.d(TAG,"Teste "+  builtUri.toString());
 
         return url;
     }
+
+
+    public static URL buildImageURL(String path){
+
+        String endPoint = IMAGE_BASE_URL + path;
+        Uri builtUri = Uri.parse(endPoint).buildUpon()
+                .appendQueryParameter(API_KEY_PARAM, BuildConfig.API_KEY)
+                .build();
+
+        URL url = null;
+        try {
+            url = new URL(builtUri.toString());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
+        Log.d(TAG,"Image  "+  builtUri.toString());
+
+        return url;
+    }
+
 }
