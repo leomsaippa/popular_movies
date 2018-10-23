@@ -73,9 +73,7 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
 
                 Movies movies = gson.fromJson(response, Movies.class);
 
-
-                Log.i("Movies", movies + " posts loaded.");
-
+                Log.i(TAG, movies + " posts loaded.");
                 moviesAdapter.setMoviesDate(movies);
             }
         }, new Response.ErrorListener() {
