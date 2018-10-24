@@ -1,6 +1,7 @@
 package com.lsaippa.movies;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -23,6 +24,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.lsaippa.movies.model.MovieResult;
 import com.lsaippa.movies.model.Movies;
 import com.lsaippa.movies.utilities.NetworkUtils;
 
@@ -115,9 +117,13 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
     }
 
     @Override
-    public void onClick() {
-        //Todo add new activity
-        Toast.makeText(mContext, "Go new activity! ", Toast.LENGTH_SHORT).show();
+    public void onClick(MovieResult movieResult) {
+
+        String MOVIETAG = MovieResult.class.getSimpleName();
+        Intent intent = new Intent(MainActivity.this,DetailActivity.class);
+        intent.putExtra(MOVIETAG, movieResult);
+
+        startActivity(intent);
     }
 
 

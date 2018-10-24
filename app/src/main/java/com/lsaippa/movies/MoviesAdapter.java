@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.lsaippa.movies.model.MovieResult;
 import com.lsaippa.movies.model.Movies;
 import com.lsaippa.movies.utilities.NetworkUtils;
 import com.squareup.picasso.Picasso;
@@ -33,7 +34,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesAdap
     }
 
     public interface MoviesAdapterOnClickHandler{
-        void onClick ();
+        void onClick (MovieResult movieResult);
     }
 
     public MoviesAdapter(MoviesAdapterOnClickHandler mClickHandler) {
@@ -57,8 +58,12 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesAdap
 
         if(moviesDate !=null){
 
-            holder.bind(moviesDate.getResults().get(position).getPoster_path());
-             holder.tv_text.setText(moviesDate.getResults().get(position).getTitle());
+            //Todo fixes this for high values
+            if(position < moviesDate.getTotal_results()){
+                holder.bind(moviesDate.getResults().get(position).getPosterPath());
+                holder.tv_text.setText(moviesDate.getResults().get(position).getTitle());
+
+            }
 
 
 
@@ -88,7 +93,8 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesAdap
 
         @Override
         public void onClick(View v) {
-            mClickHandler.onClick();
+
+            mClickHandler.onClick(moviesDate.getResults().get(getAdapterPosition()));
         }
 
         public void bind(String poster_path) {
