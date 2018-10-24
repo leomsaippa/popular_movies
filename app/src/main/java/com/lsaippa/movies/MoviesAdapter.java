@@ -61,7 +61,6 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesAdap
             //Todo fixes this for high values
             if(position < moviesDate.getTotal_results()){
                 holder.bind(moviesDate.getResults().get(position).getPosterPath());
-                holder.tv_text.setText(moviesDate.getResults().get(position).getTitle());
 
             }
 
@@ -81,12 +80,10 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesAdap
 
     public class MoviesAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        public  final TextView tv_text;
         public final ImageView iv_movie;
 
         public MoviesAdapterViewHolder(View itemView) {
             super(itemView);
-            tv_text = itemView.findViewById(R.id.tv_movie);
             iv_movie = itemView.findViewById(R.id.iv_movie);
             itemView.setOnClickListener(this);
         }

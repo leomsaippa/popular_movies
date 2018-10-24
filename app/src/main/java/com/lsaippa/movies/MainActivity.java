@@ -7,8 +7,9 @@ import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkError;
@@ -37,6 +38,7 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
     private TextView tv_mError;
     private Context mContext;
     private int DEFAULT_SPAN_SIZE = 2;
+    private String DEFAULT_ORDER_BY_MODE = NetworkUtils.ENDPOINT_TOP_RATED_MOVIES;
 
     private MoviesAdapter moviesAdapter;
 
@@ -64,13 +66,30 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
 
         moviesAdapter = new MoviesAdapter(this);
         rv_mListMovies.setAdapter(moviesAdapter);
-        loadMovies();
+        loadMovies(DEFAULT_ORDER_BY_MODE);
 
     }
 
-    private void loadMovies() {
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
 
-        URL moviesRequestUrl = NetworkUtils.buildURL(NetworkUtils.ENDPOINT_TOP_RATED_MOVIES);
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.item_popular){
+            loadMovies(NetworkUtils.ENDPOINT_POPULAR_MOVIES);
+        }else if(id == R.id.item_rated){
+            loadMovies(NetworkUtils.ENDPOINT_TOP_RATED_MOVIES);
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void loadMovies(String type) {
+
+        URL moviesRequestUrl = NetworkUtils.buildURL(type);
 
         RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
 
