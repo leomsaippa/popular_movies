@@ -9,11 +9,13 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkError;
-import com.android.volley.NoConnectionError;
 import com.android.volley.ParseError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -23,33 +25,38 @@ import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+
 import com.lsaippa.movies.model.MovieResult;
 import com.lsaippa.movies.model.Movies;
+
 import com.lsaippa.movies.utilities.EndlessRecyclerViewScrollListener;
 import com.lsaippa.movies.utilities.NetworkUtils;
 
 import java.net.URL;
 
+import static com.lsaippa.movies.utilities.Constants.DATE_FORMAT;
+import static com.lsaippa.movies.utilities.Constants.DEFAULT_SPAN_SIZE;
 import static com.lsaippa.movies.utilities.Constants.ENDPOINT_POPULAR_MOVIES;
 import static com.lsaippa.movies.utilities.Constants.ENDPOINT_TOP_RATED_MOVIES;
+import static com.lsaippa.movies.utilities.Constants.INITIAL_PAGE;
+import static com.lsaippa.movies.utilities.Constants.MOVIE_TAG;
 
 public class MainActivity extends AppCompatActivity implements MoviesAdapter.MoviesAdapterOnClickHandler {
 
     public static final String TAG = MainActivity.class.getSimpleName();
-    private RecyclerView rv_mListMovies;
-    private TextView tv_mError;
-    private Context mContext;
-    private int DEFAULT_SPAN_SIZE = 2;
-    private int INITIAL_PAGE = 1;
+
     private String DEFAULT_ORDER_BY_MODE = ENDPOINT_TOP_RATED_MOVIES;
 
     private MoviesAdapter moviesAdapter;
 
-    private EndlessRecyclerViewScrollListener scrollListener;
-
     private Gson gson;
+
+    RecyclerView mRecyclerView;
+    TextView mError;
+    ProgressBar mProgressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,34 +64,34 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
         setContentView(R.layout.activity_main);
 
         GsonBuilder gsonBuilder = new GsonBuilder();
-        gsonBuilder.setDateFormat("M/d/yy hh:mm a");
+        gsonBuilder.setDateFormat(DATE_FORMAT);
         gson = gsonBuilder.create();
 
+        Context mContext = this;
 
-        mContext = this;
-        rv_mListMovies = findViewById(R.id.rv_moviesList);
-        tv_mError = findViewById(R.id.tv_error);
+        mRecyclerView = findViewById(R.id.rv_moviesList);
+        mError = findViewById(R.id.tv_error);
+        mProgressBar = findViewById(R.id.pb_loading);
 
         GridLayoutManager layoutManager = new GridLayoutManager(mContext,DEFAULT_SPAN_SIZE);
-        rv_mListMovies.setHasFixedSize(true);
+        mRecyclerView.setHasFixedSize(true);
 
-        rv_mListMovies.setLayoutManager(layoutManager);
+        mRecyclerView.setLayoutManager(layoutManager);
 
         moviesAdapter = new MoviesAdapter(this);
-        rv_mListMovies.setAdapter(moviesAdapter);
+        mRecyclerView.setAdapter(moviesAdapter);
 
         loadMovies(DEFAULT_ORDER_BY_MODE, INITIAL_PAGE);
 
-        scrollListener = new EndlessRecyclerViewScrollListener(layoutManager) {
+        EndlessRecyclerViewScrollListener scrollListener = new EndlessRecyclerViewScrollListener(layoutManager) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                Log.d(TAG,"onLoad More "+page+"\n Items: "+totalItemsCount);
-                loadMovies(DEFAULT_ORDER_BY_MODE,page);
+                Log.d(TAG, "onLoad More " + page + "\n Total items: " + totalItemsCount);
+                loadMovies(DEFAULT_ORDER_BY_MODE, page);
             }
         };
 
-        rv_mListMovies.addOnScrollListener(scrollListener);
-
+        mRecyclerView.addOnScrollListener(scrollListener);
 
     }
 
@@ -108,62 +115,72 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
 
     private void loadMovies(String type, int page) {
 
+        showLoading();
+
         URL moviesRequestUrl = NetworkUtils.buildURL(type, page);
-
         RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
-
-
         StringRequest stringRequest = new StringRequest(Request.Method.GET, moviesRequestUrl.toString(), new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
 
+                Log.d(TAG,"onResponse");
                 Movies movies = gson.fromJson(response, Movies.class);
-
-                Log.i(TAG, movies + " posts loaded.");
                 moviesAdapter.setMoviesResult(movies.getResults());
+                showList();
                 moviesAdapter.notifyDataSetChanged();
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError volleyError) {
-
-                //Todo adds treatment for missing network connection
-                String message = null;
+                Log.d(TAG,"onErrorResponse");
 
                 if (volleyError instanceof NetworkError) {
-                    message = "Cannot connect to Internet...Please check your connection!";
+                    showError();
                 } else if (volleyError instanceof ServerError) {
-                    message = "The server could not be found. Please try again after some time!!";
+                    showError();
                 } else if (volleyError instanceof AuthFailureError) {
-                    message = "Cannot connect to Internet...Please check your connection!";
+                    showError();
                 } else if (volleyError instanceof ParseError) {
-                    message = "Parsing error! Please try again after some time!!";
-                } else if (volleyError instanceof NoConnectionError) {
-                    message = "Cannot connect to Internet...Please check your connection!";
+                    showError();
                 } else if (volleyError instanceof TimeoutError) {
-                    message = "Connection TimeOut! Please check your internet connection.";
+                    showError();
+                }else{
+                    Toast.makeText(MainActivity.this, "Something is wrong!", Toast.LENGTH_SHORT).show();
                 }
-
-                Log.d(TAG,"onError " + message);
             }
         });
 
-
         queue.add(stringRequest);
-
-
 
     }
 
     @Override
     public void onClick(MovieResult movieResult) {
-
-        String MOVIETAG = MovieResult.class.getSimpleName();
         Intent intent = new Intent(MainActivity.this,DetailActivity.class);
-        intent.putExtra(MOVIETAG, movieResult);
+        intent.putExtra(MOVIE_TAG, movieResult);
 
         startActivity(intent);
     }
 
+    private void showError(){
+        mRecyclerView.setVisibility(View.INVISIBLE);
+        mError.setVisibility(View.VISIBLE);
+        mProgressBar.setVisibility(View.INVISIBLE);
+    }
+
+    private void showLoading(){
+        mRecyclerView.setVisibility(View.INVISIBLE);
+        mError.setVisibility(View.INVISIBLE);
+        mProgressBar.setVisibility(View.VISIBLE);
+
+    }
+
+    private void showList(){
+        mRecyclerView.setVisibility(View.VISIBLE);
+        mError.setVisibility(View.INVISIBLE);
+        mProgressBar.setVisibility(View.INVISIBLE);
+
+
+    }
 
 }

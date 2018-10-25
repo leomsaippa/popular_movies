@@ -18,7 +18,7 @@ import static com.lsaippa.movies.utilities.Constants.PAGE;
 
 public class NetworkUtils {
 
-    public static final String TAG = NetworkUtils.class.getSimpleName();
+    private static final String TAG = NetworkUtils.class.getSimpleName();
 
 
 
@@ -42,7 +42,7 @@ public class NetworkUtils {
         }
 
 
-        Log.d(TAG,"Teste "+  builtUri.toString());
+        Log.d(TAG,"URI "+  builtUri.toString());
 
         return url;
     }

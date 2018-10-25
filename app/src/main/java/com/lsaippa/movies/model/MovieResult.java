@@ -9,10 +9,6 @@ import com.google.gson.annotations.SerializedName;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by lsaippa on 23/10/18.
- */
-
 public class MovieResult implements Parcelable {
 
     @SerializedName("vote_count")
