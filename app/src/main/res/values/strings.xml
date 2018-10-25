@@ -7,4 +7,5 @@
     <string name="most_popular">Most popular</string>
     <string name="most_rated">Most rated</string>
     <string name="internet_error">Cannot connect to Internet. Please check your connection!</string>
+    <string name="poster_description">Poster movie image.</string>
 </resources>

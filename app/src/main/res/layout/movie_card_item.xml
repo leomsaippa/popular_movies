@@ -16,20 +16,20 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:layout_marginStart="5dp"
-                android:layout_marginTop="10dp"
+                android:layout_marginLeft="@dimen/title_margin_left_start"
+                android:layout_marginStart="@dimen/title_margin_left_start"
+                android:layout_marginTop="@dimen/title_margin_top"
                 android:text="@string/title"
                 android:textStyle="bold"
-                android:textSize="18sp" />
+                android:textSize="@dimen/title_text_size" />
 
             <TextView
                 android:id="@+id/tv_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="16sp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginStart="10dp"
+                android:textSize="@dimen/tv_attribute_size"
+                android:layout_marginLeft="@dimen/tv_attribute_margin_left_start"
+                android:layout_marginStart="@dimen/tv_attribute_margin_left_start"
                 />
 
 
@@ -37,16 +37,16 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginStart="5dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginTop="10dp">
+                android:layout_marginStart="@dimen/title_margin_left_start"
+                android:layout_marginLeft="@dimen/title_margin_left_start"
+                android:layout_marginTop="@dimen/layout_margin_top">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/date"
                 android:textStyle="bold"
-                android:textSize="20sp" />
+                android:textSize="@dimen/tv_title_size" />
 
 
 
@@ -54,9 +54,9 @@
                 android:id="@+id/tv_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="16sp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginStart="5dp"/>
+                android:textSize="@dimen/tv_attribute_size"
+                android:layout_marginLeft="@dimen/title_margin_left_start"
+                android:layout_marginStart="@dimen/title_margin_left_start"/>
 
 
             <TextView
@@ -64,39 +64,39 @@
                 android:layout_height="wrap_content"
                 android:text="@string/rate"
                 android:textStyle="bold"
-                android:textSize="20sp"
-                android:layout_marginStart="20dp"
-                android:layout_marginLeft="20dp"/>
+                android:textSize="@dimen/tv_title_size"
+                android:layout_marginStart="@dimen/tv_rate_margin_start_left"
+                android:layout_marginLeft="@dimen/tv_rate_margin_start_left"/>
 
 
             <TextView
                 android:id="@+id/tv_votes"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="16sp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginStart="5dp"/>
+                android:textSize="@dimen/tv_attribute_size"
+                android:layout_marginLeft="@dimen/title_margin_left_start"
+                android:layout_marginStart="@dimen/title_margin_left_start"/>
 
             </LinearLayout>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:layout_marginStart="5dp"
-                android:layout_marginTop="10dp"
+                android:layout_marginLeft="@dimen/title_margin_left_start"
+                android:layout_marginStart="@dimen/title_margin_left_start"
+                android:layout_marginTop="@dimen/layout_margin_top"
                 android:text="@string/overview"
                 android:textStyle="bold"
-                android:textSize="20sp" />
+                android:textSize="@dimen/tv_title_size" />
 
 
             <TextView
                 android:id="@+id/tv_synopsis"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="16sp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginStart="10dp"/>
+                android:textSize="@dimen/tv_attribute_size"
+                android:layout_marginLeft="@dimen/tv_attribute_margin_left_start"
+                android:layout_marginStart="@dimen/tv_attribute_margin_left_start"/>
 
 
         </LinearLayout>
