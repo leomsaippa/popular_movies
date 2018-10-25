@@ -7,22 +7,25 @@
 
     <ImageView
         android:id="@+id/iv_poster"
-        android:layout_width="200dp"
-        android:layout_height="250dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/include"
+        android:layout_width="@dimen/iv_detail_width"
+        android:layout_height="@dimen/iv_detail_height"
+        android:contentDescription="@string/poster_description"
+        android:layout_marginBottom="@dimen/iv_detail_margin_bottom"
+        android:layout_marginEnd="@dimen/iv_detail_margin_end"
+        android:layout_marginStart="@dimen/iv_detail_margin_start"
+        android:layout_marginTop="@dimen/iv_detail_margin_top"
+        app:layout_constraintBottom_toTopOf="@+id/include_card"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginRight="@dimen/iv_detail_margin_end"
+        android:layout_marginLeft="@dimen/iv_detail_margin_start" />
 
     <include
-        android:id="@+id/include"
+        android:id="@+id/include_card"
         layout="@layout/movie_card_item"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="@dimen/include_card_height"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"

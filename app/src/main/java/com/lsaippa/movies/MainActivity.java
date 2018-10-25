@@ -46,17 +46,17 @@ import static com.lsaippa.movies.utilities.Constants.MOVIE_TAG;
 
 public class MainActivity extends AppCompatActivity implements MoviesAdapter.MoviesAdapterOnClickHandler {
 
-    public static final String TAG = MainActivity.class.getSimpleName();
+    private static final String TAG = MainActivity.class.getSimpleName();
 
-    private String DEFAULT_ORDER_BY_MODE = ENDPOINT_TOP_RATED_MOVIES;
+    private final String DEFAULT_ORDER_BY_MODE = ENDPOINT_TOP_RATED_MOVIES;
 
     private MoviesAdapter moviesAdapter;
 
     private Gson gson;
 
-    RecyclerView mRecyclerView;
-    TextView mError;
-    ProgressBar mProgressBar;
+    private RecyclerView mRecyclerView;
+    private TextView mError;
+    private ProgressBar mProgressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
