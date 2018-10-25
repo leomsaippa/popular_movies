@@ -5,20 +5,21 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-/**
- * Created by lsaippa on 23/10/18.
- */
 
 public class Movies {
 
 
     @SerializedName("page")
+    @Expose
     private Integer page;
     @SerializedName("total_results")
-    private Integer total_results;
+    @Expose
+    private Integer totalResults;
     @SerializedName("total_pages")
-    private Integer total_pages;
+    @Expose
+    private Integer totalPages;
     @SerializedName("results")
+    @Expose
     private List<MovieResult> results = null;
 
     public Movies(){
@@ -34,19 +35,19 @@ public class Movies {
     }
 
     public Integer getTotal_results() {
-        return total_results;
+        return totalResults;
     }
 
     public void setTotal_results(Integer total_results) {
-        this.total_results = total_results;
+        this.totalResults = total_results;
     }
 
     public Integer getTotal_pages() {
-        return total_pages;
+        return totalPages;
     }
 
     public void setTotal_pages(Integer total_pages) {
-        this.total_pages = total_pages;
+        this.totalPages = total_pages;
     }
 
     public List<MovieResult> getResults() {
@@ -61,8 +62,8 @@ public class Movies {
     public String toString() {
         return "Movies{" +
                 "page=" + page +
-                ", total_results=" + total_results +
-                ", total_pages=" + total_pages +
+                ", total_results=" + totalResults +
+                ", total_pages=" + totalPages +
                 ", results=" + results +
                 '}';
     }

@@ -9,15 +9,30 @@
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_moviesList"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="match_parent"/>
 
     <TextView
         android:id="@+id/tv_error"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="@string/internet_error"
+        android:visibility="invisible"
+        android:textAlignment="center"
+        android:layout_gravity="center"
+        android:padding="2dp"
+        android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <ProgressBar
+        android:id="@+id/pb_loading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@android:style/Widget.ProgressBar.Large"
+        android:indeterminate="true"
+        android:layout_gravity="center"
+        android:visibility="invisible"/>
 
 </FrameLayout>

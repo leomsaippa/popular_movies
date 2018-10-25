@@ -8,28 +8,21 @@ import com.lsaippa.movies.BuildConfig;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-/**
- * Created by lsaippa on 22/10/18.
- */
+import static com.lsaippa.movies.utilities.Constants.API_KEY_PARAM;
+import static com.lsaippa.movies.utilities.Constants.ENDPOINT_POPULAR_MOVIES;
+import static com.lsaippa.movies.utilities.Constants.ENDPOINT_TOP_RATED_MOVIES;
+import static com.lsaippa.movies.utilities.Constants.IMAGE_BASE_URL;
+import static com.lsaippa.movies.utilities.Constants.MOVIES_BASE_URL;
+import static com.lsaippa.movies.utilities.Constants.PAGE;
+
 
 public class NetworkUtils {
 
-    public static final String TAG = NetworkUtils.class.getSimpleName();
-    //Ex: https://api.themoviedb.org/3/movie/popular?api_key
+    private static final String TAG = NetworkUtils.class.getSimpleName();
 
 
-    final static String MOVIES_BASE_URL = "https://api.themoviedb.org/3";
 
-    final static String API_KEY_PARAM = "api_key";
-
-    public static final String ENDPOINT_POPULAR_MOVIES = "/movie/popular";
-
-    public static final String ENDPOINT_TOP_RATED_MOVIES = "/movie/top_rated";
-
-    public static final String IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w185/";
-
-
-    public static URL buildURL(String type){
+    public static URL buildURL(String type, int page){
         String endpoint = MOVIES_BASE_URL;
         if (type.equals(ENDPOINT_POPULAR_MOVIES)) {
             endpoint += ENDPOINT_POPULAR_MOVIES;
@@ -38,6 +31,7 @@ public class NetworkUtils {
         }
         Uri builtUri = Uri.parse(endpoint).buildUpon()
                 .appendQueryParameter(API_KEY_PARAM, BuildConfig.API_KEY)
+                .appendQueryParameter(PAGE,String.valueOf(page))
                 .build();
 
         URL url = null;
@@ -48,7 +42,7 @@ public class NetworkUtils {
         }
 
 
-        Log.d(TAG,"Teste "+  builtUri.toString());
+        Log.d(TAG,"URI "+  builtUri.toString());
 
         return url;
     }

@@ -3,33 +3,33 @@ package com.lsaippa.movies;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.lsaippa.movies.model.MovieResult;
-import com.lsaippa.movies.model.Movies;
 import com.lsaippa.movies.utilities.NetworkUtils;
+
 import com.squareup.picasso.Picasso;
 
 import java.net.URL;
+import java.util.List;
 
-/**
- * Created by lsaippa on 22/10/18.
- */
 
 public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesAdapterViewHolder> {
 
-    public static final String TAG = MoviesAdapter.class.getSimpleName();
+    private static final String TAG = MoviesAdapter.class.getSimpleName();
 
     private final MoviesAdapterOnClickHandler mClickHandler;
 
-    private Movies moviesDate;
 
-    public void setMoviesDate(Movies moviesDate) {
-        this.moviesDate = moviesDate;
+    private List<MovieResult> moviesList;
+
+
+    void setMoviesResult(List<MovieResult> moviesResult) {
+        this.moviesList = moviesResult;
         notifyDataSetChanged();
     }
 
@@ -37,7 +37,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesAdap
         void onClick (MovieResult movieResult);
     }
 
-    public MoviesAdapter(MoviesAdapterOnClickHandler mClickHandler) {
+    MoviesAdapter(MoviesAdapterOnClickHandler mClickHandler) {
         this.mClickHandler = mClickHandler;
     }
 
@@ -48,33 +48,28 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesAdap
         Context context = parent.getContext();
         int layoutIdForListItem = R.layout.movie_list_item;
         LayoutInflater inflater = LayoutInflater.from(context);
-        boolean shouldAttachToParentImmediately = false;
-        View view = inflater.inflate(layoutIdForListItem,parent,shouldAttachToParentImmediately);
+        View view = inflater.inflate(layoutIdForListItem,parent, false);
         return new MoviesAdapterViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull MoviesAdapterViewHolder holder, int position) {
 
-        if(moviesDate !=null){
+            MovieResult movie = moviesList.get(position);
 
-            //Todo fixes this for high values
-            if(position < moviesDate.getTotal_results()){
-                holder.bind(moviesDate.getResults().get(position).getPosterPath());
-
-            }
+            holder.bind(movie.getPosterPath());
 
 
 
-        }
+
     }
 
     @Override
     public int getItemCount() {
-        if(moviesDate==null){
+        if(moviesList==null){
             return 0;
         }
-        return moviesDate.getTotal_results();
+        return moviesList.size();
     }
 
 
@@ -90,14 +85,12 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesAdap
 
         @Override
         public void onClick(View v) {
-
-            mClickHandler.onClick(moviesDate.getResults().get(getAdapterPosition()));
+            Log.d(TAG,"onClick " + getAdapterPosition());
+            mClickHandler.onClick(moviesList.get((getAdapterPosition())));
         }
 
-        public void bind(String poster_path) {
+        void bind(String poster_path) {
             URL posterUrl = NetworkUtils.buildImageURL(poster_path);
-
-
             Picasso.get().load(posterUrl.toString()).into(iv_movie);
         }
     }
