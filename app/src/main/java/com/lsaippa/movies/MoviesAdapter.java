@@ -15,6 +15,7 @@ import com.lsaippa.movies.utilities.NetworkUtils;
 import com.squareup.picasso.Picasso;
 
 import java.net.URL;
+import java.util.List;
 
 /**
  * Created by lsaippa on 22/10/18.
@@ -26,10 +27,12 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesAdap
 
     private final MoviesAdapterOnClickHandler mClickHandler;
 
-    private Movies moviesDate;
 
-    public void setMoviesDate(Movies moviesDate) {
-        this.moviesDate = moviesDate;
+    private List<MovieResult> moviesList;
+
+
+    public void setMoviesResult(List<MovieResult> moviesResult) {
+        this.moviesList = moviesResult;
         notifyDataSetChanged();
     }
 
@@ -56,25 +59,21 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesAdap
     @Override
     public void onBindViewHolder(@NonNull MoviesAdapterViewHolder holder, int position) {
 
-        if(moviesDate !=null){
+            MovieResult movie = moviesList.get(position);
 
-            //Todo fixes this for high values
-            if(position < moviesDate.getTotal_results()){
-                holder.bind(moviesDate.getResults().get(position).getPosterPath());
-
-            }
+            holder.bind(movie.getPosterPath());
 
 
 
-        }
+
     }
 
     @Override
     public int getItemCount() {
-        if(moviesDate==null){
+        if(moviesList==null){
             return 0;
         }
-        return moviesDate.getTotal_results();
+        return moviesList.size();
     }
 
 
@@ -91,7 +90,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesAdap
         @Override
         public void onClick(View v) {
 
-            mClickHandler.onClick(moviesDate.getResults().get(getAdapterPosition()));
+            mClickHandler.onClick(moviesList.get((getAdapterPosition())));
         }
 
         public void bind(String poster_path) {

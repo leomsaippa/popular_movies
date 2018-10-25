@@ -27,9 +27,13 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.lsaippa.movies.model.MovieResult;
 import com.lsaippa.movies.model.Movies;
+import com.lsaippa.movies.utilities.EndlessRecyclerViewScrollListener;
 import com.lsaippa.movies.utilities.NetworkUtils;
 
 import java.net.URL;
+
+import static com.lsaippa.movies.utilities.Constants.ENDPOINT_POPULAR_MOVIES;
+import static com.lsaippa.movies.utilities.Constants.ENDPOINT_TOP_RATED_MOVIES;
 
 public class MainActivity extends AppCompatActivity implements MoviesAdapter.MoviesAdapterOnClickHandler {
 
@@ -38,12 +42,14 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
     private TextView tv_mError;
     private Context mContext;
     private int DEFAULT_SPAN_SIZE = 2;
-    private String DEFAULT_ORDER_BY_MODE = NetworkUtils.ENDPOINT_TOP_RATED_MOVIES;
+    private int INITIAL_PAGE = 1;
+    private String DEFAULT_ORDER_BY_MODE = ENDPOINT_TOP_RATED_MOVIES;
 
     private MoviesAdapter moviesAdapter;
 
-    private Gson gson;
+    private EndlessRecyclerViewScrollListener scrollListener;
 
+    private Gson gson;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,16 +65,29 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
         rv_mListMovies = findViewById(R.id.rv_moviesList);
         tv_mError = findViewById(R.id.tv_error);
 
-        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(mContext,DEFAULT_SPAN_SIZE);
+        GridLayoutManager layoutManager = new GridLayoutManager(mContext,DEFAULT_SPAN_SIZE);
         rv_mListMovies.setHasFixedSize(true);
 
         rv_mListMovies.setLayoutManager(layoutManager);
 
         moviesAdapter = new MoviesAdapter(this);
         rv_mListMovies.setAdapter(moviesAdapter);
-        loadMovies(DEFAULT_ORDER_BY_MODE);
+
+        loadMovies(DEFAULT_ORDER_BY_MODE, INITIAL_PAGE);
+
+        scrollListener = new EndlessRecyclerViewScrollListener(layoutManager) {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                Log.d(TAG,"onLoad More "+page+"\n Items: "+totalItemsCount);
+                loadMovies(DEFAULT_ORDER_BY_MODE,page);
+            }
+        };
+
+        rv_mListMovies.addOnScrollListener(scrollListener);
+
 
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -80,16 +99,16 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.item_popular){
-            loadMovies(NetworkUtils.ENDPOINT_POPULAR_MOVIES);
+            loadMovies(ENDPOINT_POPULAR_MOVIES,INITIAL_PAGE);
         }else if(id == R.id.item_rated){
-            loadMovies(NetworkUtils.ENDPOINT_TOP_RATED_MOVIES);
+            loadMovies(ENDPOINT_TOP_RATED_MOVIES,INITIAL_PAGE);
         }
         return super.onOptionsItemSelected(item);
     }
 
-    private void loadMovies(String type) {
+    private void loadMovies(String type, int page) {
 
-        URL moviesRequestUrl = NetworkUtils.buildURL(type);
+        URL moviesRequestUrl = NetworkUtils.buildURL(type, page);
 
         RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
 
@@ -101,7 +120,8 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
                 Movies movies = gson.fromJson(response, Movies.class);
 
                 Log.i(TAG, movies + " posts loaded.");
-                moviesAdapter.setMoviesDate(movies);
+                moviesAdapter.setMoviesResult(movies.getResults());
+                moviesAdapter.notifyDataSetChanged();
             }
         }, new Response.ErrorListener() {
             @Override
