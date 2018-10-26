@@ -52,11 +52,14 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
 
     private MoviesAdapter moviesAdapter;
 
+    private String currentMovieType;
     private Gson gson;
 
     private RecyclerView mRecyclerView;
     private TextView mError;
     private ProgressBar mProgressBar;
+
+    private EndlessRecyclerViewScrollListener scrollListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +71,8 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
         gson = gsonBuilder.create();
 
         Context mContext = this;
+
+        currentMovieType = DEFAULT_ORDER_BY_MODE;
 
         mRecyclerView = findViewById(R.id.rv_moviesList);
         mError = findViewById(R.id.tv_error);
@@ -81,9 +86,9 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
         moviesAdapter = new MoviesAdapter(this);
         mRecyclerView.setAdapter(moviesAdapter);
 
-        loadMovies(DEFAULT_ORDER_BY_MODE, INITIAL_PAGE);
+        loadMovies(currentMovieType, INITIAL_PAGE);
 
-        EndlessRecyclerViewScrollListener scrollListener = new EndlessRecyclerViewScrollListener(layoutManager) {
+        scrollListener = new EndlessRecyclerViewScrollListener(layoutManager) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
                 Log.d(TAG, "onLoad More " + page + "\n Total items: " + totalItemsCount);
@@ -117,6 +122,11 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
 
         showLoading();
 
+        if(currentMovieType != type){
+            scrollListener.resetState();
+            moviesAdapter.clear();
+            currentMovieType = type;
+        }
         URL moviesRequestUrl = NetworkUtils.buildURL(type, page);
         RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
         StringRequest stringRequest = new StringRequest(Request.Method.GET, moviesRequestUrl.toString(), new Response.Listener<String>() {
