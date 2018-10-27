@@ -1,6 +1,5 @@
 package com.lsaippa.movies;
 
-import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -10,6 +9,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,18 +26,16 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
-import com.lsaippa.movies.model.MovieResult;
 import com.lsaippa.movies.model.Movies;
+import com.lsaippa.movies.model.MovieResult;
 
 import com.lsaippa.movies.utilities.EndlessRecyclerViewScrollListener;
+import com.lsaippa.movies.utilities.JsonParser;
 import com.lsaippa.movies.utilities.NetworkUtils;
 
 import java.net.URL;
 
-import static com.lsaippa.movies.utilities.Constants.DATE_FORMAT;
 import static com.lsaippa.movies.utilities.Constants.DEFAULT_SPAN_SIZE;
 import static com.lsaippa.movies.utilities.Constants.ENDPOINT_POPULAR_MOVIES;
 import static com.lsaippa.movies.utilities.Constants.ENDPOINT_TOP_RATED_MOVIES;
@@ -53,11 +51,12 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
     private MoviesAdapter moviesAdapter;
 
     private String currentMovieType;
-    private Gson gson;
+    private int currentPage;
 
     private RecyclerView mRecyclerView;
     private TextView mError;
     private ProgressBar mProgressBar;
+    private Button mButtonTryAgain;
 
     private EndlessRecyclerViewScrollListener scrollListener;
 
@@ -66,19 +65,22 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        GsonBuilder gsonBuilder = new GsonBuilder();
-        gsonBuilder.setDateFormat(DATE_FORMAT);
-        gson = gsonBuilder.create();
+        setup();
 
-        Context mContext = this;
+        loadMovies(currentMovieType, currentPage);
+    }
+
+    private void setup() {
 
         currentMovieType = DEFAULT_ORDER_BY_MODE;
+        currentPage = INITIAL_PAGE;
 
         mRecyclerView = findViewById(R.id.rv_moviesList);
         mError = findViewById(R.id.tv_error);
         mProgressBar = findViewById(R.id.pb_loading);
+        mButtonTryAgain = findViewById(R.id.btn_try_again);
 
-        GridLayoutManager layoutManager = new GridLayoutManager(mContext,DEFAULT_SPAN_SIZE);
+        GridLayoutManager layoutManager = new GridLayoutManager(this,DEFAULT_SPAN_SIZE);
         mRecyclerView.setHasFixedSize(true);
 
         mRecyclerView.setLayoutManager(layoutManager);
@@ -86,18 +88,24 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
         moviesAdapter = new MoviesAdapter(this);
         mRecyclerView.setAdapter(moviesAdapter);
 
+        mButtonTryAgain.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                loadMovies(currentMovieType,currentPage);
+            }
+        });
+
 
         scrollListener = new EndlessRecyclerViewScrollListener(layoutManager) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
                 Log.d(TAG, "onLoad More " + page + "\n Total items: " + totalItemsCount);
-                loadMovies(DEFAULT_ORDER_BY_MODE, page);
+                currentPage = page;
+                loadMovies(currentMovieType, currentPage);
             }
         };
 
         mRecyclerView.addOnScrollListener(scrollListener);
-
-        loadMovies(currentMovieType, INITIAL_PAGE);
     }
 
 
@@ -120,55 +128,66 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
 
     private void loadMovies(String type, int page) {
 
-        showLoading();
+        if(NetworkUtils.isOnline(getApplicationContext())){
 
+            showLoading();
+
+            verifyCurrentType(type);
+            URL moviesRequestUrl = NetworkUtils.buildURL(type, page);
+            RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
+            StringRequest stringRequest = new StringRequest(Request.Method.GET, moviesRequestUrl.toString(), new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+
+                    Log.d(TAG,"onResponse");
+                    MovieResult movies = JsonParser.getMoviesFromJson(response);
+
+                    moviesAdapter.setMoviesResult(movies.getResults());
+                    showList();
+                    moviesAdapter.notifyDataSetChanged();
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError volleyError) {
+                    Log.d(TAG,"onErrorResponse");
+
+                    if (volleyError instanceof NetworkError) {
+                        showError();
+                    } else if (volleyError instanceof ServerError) {
+                        showError();
+                    } else if (volleyError instanceof AuthFailureError) {
+                        showError();
+                    } else if (volleyError instanceof ParseError) {
+                        showError();
+                    } else if (volleyError instanceof TimeoutError) {
+                        showError();
+                    }else{
+                        Toast.makeText(MainActivity.this, getString(R.string.generic_error), Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+
+            queue.add(stringRequest);
+        }else{
+            verifyCurrentType(type);
+            showError();
+        }
+
+    }
+
+    private void verifyCurrentType(String type) {
         if(!currentMovieType.equals(type)){
             currentMovieType = type;
             scrollListener.resetState();
             moviesAdapter.clear();
             moviesAdapter.notifyDataSetChanged();
         }
-        URL moviesRequestUrl = NetworkUtils.buildURL(type, page);
-        RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, moviesRequestUrl.toString(), new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-
-                Log.d(TAG,"onResponse");
-                Movies movies = gson.fromJson(response, Movies.class);
-                moviesAdapter.setMoviesResult(movies.getResults());
-                showList();
-                moviesAdapter.notifyDataSetChanged();
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError volleyError) {
-                Log.d(TAG,"onErrorResponse");
-
-                if (volleyError instanceof NetworkError) {
-                    showError();
-                } else if (volleyError instanceof ServerError) {
-                    showError();
-                } else if (volleyError instanceof AuthFailureError) {
-                    showError();
-                } else if (volleyError instanceof ParseError) {
-                    showError();
-                } else if (volleyError instanceof TimeoutError) {
-                    showError();
-                }else{
-                    Toast.makeText(MainActivity.this, "Something is wrong!", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-
-        queue.add(stringRequest);
-
     }
 
     @Override
-    public void onClick(MovieResult movieResult) {
+    public void onClick(Movies movies) {
         Intent intent = new Intent(MainActivity.this,DetailActivity.class);
-        intent.putExtra(MOVIE_TAG, movieResult);
+        intent.putExtra(MOVIE_TAG, movies);
 
         startActivity(intent);
     }
@@ -177,21 +196,21 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
         mRecyclerView.setVisibility(View.INVISIBLE);
         mError.setVisibility(View.VISIBLE);
         mProgressBar.setVisibility(View.INVISIBLE);
+        mButtonTryAgain.setVisibility(View.VISIBLE);
     }
 
     private void showLoading(){
         mRecyclerView.setVisibility(View.INVISIBLE);
         mError.setVisibility(View.INVISIBLE);
         mProgressBar.setVisibility(View.VISIBLE);
-
+        mButtonTryAgain.setVisibility(View.INVISIBLE);
     }
 
     private void showList(){
         mRecyclerView.setVisibility(View.VISIBLE);
         mError.setVisibility(View.INVISIBLE);
         mProgressBar.setVisibility(View.INVISIBLE);
-
-
+        mButtonTryAgain.setVisibility(View.INVISIBLE);
     }
 
 }
