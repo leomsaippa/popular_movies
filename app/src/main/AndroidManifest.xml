@@ -11,7 +11,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:fullBackupContent="@xml/backup_descriptor">
-        <activity android:name=".MainActivity">
+        <activity android:name=".MainActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="android.intent.action.VIEW" />
@@ -20,7 +22,9 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".DetailActivity">
+        <activity android:name=".DetailActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait">
 
         </activity>
     </application>
