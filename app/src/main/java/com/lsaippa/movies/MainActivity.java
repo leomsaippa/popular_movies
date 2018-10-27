@@ -86,7 +86,6 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
         moviesAdapter = new MoviesAdapter(this);
         mRecyclerView.setAdapter(moviesAdapter);
 
-        loadMovies(currentMovieType, INITIAL_PAGE);
 
         scrollListener = new EndlessRecyclerViewScrollListener(layoutManager) {
             @Override
@@ -98,6 +97,7 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
 
         mRecyclerView.addOnScrollListener(scrollListener);
 
+        loadMovies(currentMovieType, INITIAL_PAGE);
     }
 
 
@@ -122,7 +122,7 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
 
         showLoading();
 
-        if(currentMovieType != type){
+        if(!currentMovieType.equals(type)){
             currentMovieType = type;
             scrollListener.resetState();
             moviesAdapter.clear();
