@@ -23,7 +23,6 @@ public class NetworkUtils {
 
 
     public static URL buildURL(String type, int page){
-        String apiKey = Configuration.getInstance().getProperty(API_KEY_PARAM);
         String endpoint = MOVIES_BASE_URL;
         if (type.equals(ENDPOINT_POPULAR_MOVIES)) {
             endpoint += ENDPOINT_POPULAR_MOVIES;
@@ -31,7 +30,7 @@ public class NetworkUtils {
             endpoint += ENDPOINT_TOP_RATED_MOVIES;
         }
         Uri builtUri = Uri.parse(endpoint).buildUpon()
-                .appendQueryParameter(API_KEY_PARAM, apiKey)
+                .appendQueryParameter(API_KEY_PARAM, BuildConfig.API_KEY)
                 .appendQueryParameter(PAGE,String.valueOf(page))
                 .build();
 
