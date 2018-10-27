@@ -6,7 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.lsaippa.movies.model.MovieResult;
+import com.lsaippa.movies.model.Movies;
 import com.lsaippa.movies.utilities.NetworkUtils;
 import com.squareup.picasso.Picasso;
 
@@ -28,19 +28,17 @@ public class DetailActivity extends AppCompatActivity {
         TextView mSynopsisMovie = findViewById(R.id.tv_synopsis);
         ImageView mPosterMovie = findViewById(R.id.iv_poster);
 
-
-
         Bundle bundle = getIntent().getExtras();
         if(bundle!=null || getIntent().hasExtra(MOVIE_TAG)){
-            MovieResult movieResult = getIntent().getParcelableExtra(MOVIE_TAG);
+            Movies movies = getIntent().getParcelableExtra(MOVIE_TAG);
 
-            URL posterUrl = NetworkUtils.buildImageURL(movieResult.getPosterPath());
+            URL posterUrl = NetworkUtils.buildImageURL(movies.getPosterPath());
             Picasso.get().load(posterUrl.toString()).into(mPosterMovie);
 
-            mTitleMovie.setText(movieResult.getTitle());
-            mVoteMovie.setText(String.valueOf(movieResult.getVoteAverage()));
-            mDateMovie.setText(movieResult.getReleaseDate());
-            mSynopsisMovie.setText(movieResult.getOverview());
+            mTitleMovie.setText(movies.getTitle());
+            mVoteMovie.setText(String.valueOf(movies.getVoteAverage()));
+            mDateMovie.setText(movies.getReleaseDate());
+            mSynopsisMovie.setText(movies.getOverview());
 
         }
     }

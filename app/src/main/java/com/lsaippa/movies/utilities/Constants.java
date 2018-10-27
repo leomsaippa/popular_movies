@@ -1,6 +1,6 @@
 package com.lsaippa.movies.utilities;
 
-import com.lsaippa.movies.model.MovieResult;
+import com.lsaippa.movies.model.Movies;
 
 public interface Constants {
 
@@ -23,6 +23,6 @@ public interface Constants {
 
     String DATE_FORMAT = "M/d/yy hh:mm a";
 
-    String MOVIE_TAG = MovieResult.class.getSimpleName();
+    String MOVIE_TAG = Movies.class.getSimpleName();
 
 }

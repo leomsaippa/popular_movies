@@ -32,7 +32,6 @@
                 android:layout_marginStart="@dimen/tv_attribute_margin_left_start"
                 />
 
-
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -41,41 +40,37 @@
                 android:layout_marginLeft="@dimen/title_margin_left_start"
                 android:layout_marginTop="@dimen/layout_margin_top">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/date"
-                android:textStyle="bold"
-                android:textSize="@dimen/tv_title_size" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/date"
+                    android:textStyle="bold"
+                    android:textSize="@dimen/tv_title_size" />
 
+                <TextView
+                    android:id="@+id/tv_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/tv_attribute_size"
+                    android:layout_marginLeft="@dimen/title_margin_left_start"
+                    android:layout_marginStart="@dimen/title_margin_left_start"/>
 
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/rate"
+                    android:textStyle="bold"
+                    android:textSize="@dimen/tv_title_size"
+                    android:layout_marginStart="@dimen/tv_rate_margin_start_left"
+                    android:layout_marginLeft="@dimen/tv_rate_margin_start_left"/>
 
-            <TextView
-                android:id="@+id/tv_date"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="@dimen/tv_attribute_size"
-                android:layout_marginLeft="@dimen/title_margin_left_start"
-                android:layout_marginStart="@dimen/title_margin_left_start"/>
-
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/rate"
-                android:textStyle="bold"
-                android:textSize="@dimen/tv_title_size"
-                android:layout_marginStart="@dimen/tv_rate_margin_start_left"
-                android:layout_marginLeft="@dimen/tv_rate_margin_start_left"/>
-
-
-            <TextView
-                android:id="@+id/tv_votes"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="@dimen/tv_attribute_size"
-                android:layout_marginLeft="@dimen/title_margin_left_start"
-                android:layout_marginStart="@dimen/title_margin_left_start"/>
+                <TextView
+                    android:id="@+id/tv_votes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/tv_attribute_size"
+                    android:layout_marginLeft="@dimen/title_margin_left_start"
+                    android:layout_marginStart="@dimen/title_margin_left_start"/>
 
             </LinearLayout>
 
@@ -89,7 +84,6 @@
                 android:textStyle="bold"
                 android:textSize="@dimen/tv_title_size" />
 
-
             <TextView
                 android:id="@+id/tv_synopsis"
                 android:layout_width="wrap_content"
@@ -97,7 +91,6 @@
                 android:textSize="@dimen/tv_attribute_size"
                 android:layout_marginLeft="@dimen/tv_attribute_margin_left_start"
                 android:layout_marginStart="@dimen/tv_attribute_margin_left_start"/>
-
 
         </LinearLayout>
     </ScrollView>

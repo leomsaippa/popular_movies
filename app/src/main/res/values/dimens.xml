@@ -17,7 +17,7 @@
     <dimen name="tv_title_size">20sp</dimen>
     <dimen name="layout_margin_top">10dp</dimen>
     <dimen name="tv_rate_margin_start_left">20dp</dimen>
-    <dimen name="iv_poster_list_width">300dp</dimen>
+    <dimen name="iv_poster_list_width">200dp</dimen>
     <dimen name="iv_poster_list_height">300dp</dimen>
 
 

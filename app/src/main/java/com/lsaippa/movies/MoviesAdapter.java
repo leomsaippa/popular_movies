@@ -1,6 +1,5 @@
 package com.lsaippa.movies;
 
-import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -9,7 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.lsaippa.movies.model.MovieResult;
+import com.lsaippa.movies.model.Movies;
 import com.lsaippa.movies.utilities.NetworkUtils;
 
 import com.squareup.picasso.Picasso;
@@ -24,11 +23,9 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesAdap
 
     private final MoviesAdapterOnClickHandler mClickHandler;
 
+    private List<Movies> moviesList;
 
-    private List<MovieResult> moviesList;
-
-
-    void setMoviesResult(List<MovieResult> moviesResult) {
+    void setMoviesResult(List<Movies> moviesResult) {
         if(moviesList != null){
             this.moviesList.addAll(moviesResult);
 
@@ -39,10 +36,15 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesAdap
     }
 
     void clear(){
-        moviesList.clear();
+        if(moviesList!=null){
+            moviesList.clear();
+        }else{
+            Log.d(TAG,"Can't clear. Movies list is null!");
+        }
     }
+
     public interface MoviesAdapterOnClickHandler{
-        void onClick (MovieResult movieResult);
+        void onClick (Movies movies);
     }
 
     MoviesAdapter(MoviesAdapterOnClickHandler mClickHandler) {
@@ -53,23 +55,15 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesAdap
     @NonNull
     @Override
     public MoviesAdapterViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        Context context = parent.getContext();
-        int layoutIdForListItem = R.layout.movie_list_item;
-        LayoutInflater inflater = LayoutInflater.from(context);
-        View view = inflater.inflate(layoutIdForListItem,parent, false);
+        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+        View view = inflater.inflate(R.layout.movie_list_item,parent, false);
         return new MoviesAdapterViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull MoviesAdapterViewHolder holder, int position) {
-
-            MovieResult movie = moviesList.get(position);
-
-            holder.bind(movie.getPosterPath());
-
-
-
-
+        Movies movies = moviesList.get(position);
+        holder.bind(movies.getPosterPath());
     }
 
     @Override
@@ -83,11 +77,11 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesAdap
 
     public class MoviesAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        public final ImageView iv_movie;
+        public final ImageView mIvMovie;
 
         public MoviesAdapterViewHolder(View itemView) {
             super(itemView);
-            iv_movie = itemView.findViewById(R.id.iv_movie);
+            mIvMovie = itemView.findViewById(R.id.iv_movie);
             itemView.setOnClickListener(this);
         }
 
@@ -99,7 +93,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesAdap
 
         void bind(String poster_path) {
             URL posterUrl = NetworkUtils.buildImageURL(poster_path);
-            Picasso.get().load(posterUrl.toString()).into(iv_movie);
+            Picasso.get().load(posterUrl.toString()).into(mIvMovie);
         }
     }
 }

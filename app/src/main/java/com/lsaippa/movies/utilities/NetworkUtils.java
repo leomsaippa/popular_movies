@@ -1,5 +1,7 @@
 package com.lsaippa.movies.utilities;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.util.Log;
 
@@ -21,6 +23,12 @@ public class NetworkUtils {
     private static final String TAG = NetworkUtils.class.getSimpleName();
 
 
+    public static boolean isOnline(Context mContext) {
+        ConnectivityManager cm =
+                (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        return cm != null && cm.getActiveNetworkInfo() != null && cm.getActiveNetworkInfo().isConnectedOrConnecting();
+    }
 
     public static URL buildURL(String type, int page){
         String endpoint = MOVIES_BASE_URL;
