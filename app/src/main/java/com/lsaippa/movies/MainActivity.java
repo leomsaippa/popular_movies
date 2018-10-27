@@ -123,9 +123,10 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
         showLoading();
 
         if(currentMovieType != type){
+            currentMovieType = type;
             scrollListener.resetState();
             moviesAdapter.clear();
-            currentMovieType = type;
+            moviesAdapter.notifyDataSetChanged();
         }
         URL moviesRequestUrl = NetworkUtils.buildURL(type, page);
         RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
