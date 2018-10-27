@@ -29,10 +29,18 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesAdap
 
 
     void setMoviesResult(List<MovieResult> moviesResult) {
-        this.moviesList = moviesResult;
+        if(moviesList != null){
+            this.moviesList.addAll(moviesResult);
+
+        }else{
+            this.moviesList = moviesResult;
+        }
         notifyDataSetChanged();
     }
 
+    void clear(){
+        moviesList.clear();
+    }
     public interface MoviesAdapterOnClickHandler{
         void onClick (MovieResult movieResult);
     }
