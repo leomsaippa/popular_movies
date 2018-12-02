@@ -13,4 +13,10 @@
         android:title="@string/most_rated"
         app:showAsAction="never">
     </item>
+
+    <item
+        android:id="@+id/item_favorite"
+        android:title="@string/favorites"
+        app:showAsAction="never"/>
+
 </menu>
