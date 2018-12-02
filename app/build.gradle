@@ -61,6 +61,8 @@ dependencies {
     annotationProcessor "android.arch.persistence.room:compiler:$roomVersion"
     implementation "android.arch.lifecycle:livedata:$liveDataVersion"
 
+    implementation "android.arch.lifecycle:extensions:$lifecycleVersion"
+    implementation "android.arch.lifecycle:viewmodel:$lifecycleVersion"
 
     implementation "com.android.support.constraint:constraint-layout:$constraintLayoutVersion"
 }
