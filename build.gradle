@@ -36,4 +36,6 @@ project.ext {
     picassoVersion = '2.71828'
     gsonVersion = '2.8.2'
     volleyVersion = '1.1.1'
+
+    roomVersion = '1.1.1'
 }
