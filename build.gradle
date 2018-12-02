@@ -38,4 +38,5 @@ project.ext {
     volleyVersion = '1.1.1'
 
     roomVersion = '1.1.1'
+    liveDataVersion = '1.1.1'
 }

@@ -1,5 +1,8 @@
 package com.lsaippa.movies.model;
 
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
+import android.arch.persistence.room.PrimaryKey;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -10,12 +13,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings("unused")
+@Entity(tableName = "movie")
 public class Movies implements Parcelable {
 
     @SerializedName("vote_count")
     @Expose
     private Integer voteCount;
     @SerializedName("id")
+    @PrimaryKey(autoGenerate = true)
     @Expose
     private Integer id;
     @SerializedName("video")
@@ -39,9 +44,9 @@ public class Movies implements Parcelable {
     @SerializedName("original_title")
     @Expose
     private String originalTitle;
-    @SerializedName("genre_ids")
+/*    @SerializedName("genre_ids")
     @Expose
-    private List<Integer> genreIds = null;
+    private List<Integer> genreIds = null;*/
     @SerializedName("adult")
     @Expose
     private Boolean adult;
@@ -124,14 +129,6 @@ public class Movies implements Parcelable {
         this.originalTitle = originalTitle;
     }
 
-    public List<Integer> getGenreIds() {
-        return genreIds;
-    }
-
-    public void setGenreIds(List<Integer> genreIds) {
-        this.genreIds = genreIds;
-    }
-
     public Boolean getAdult() {
         return adult;
     }
@@ -168,7 +165,6 @@ public class Movies implements Parcelable {
                 ", posterPath='" + posterPath + '\'' +
                 ", originalLanguage='" + originalLanguage + '\'' +
                 ", originalTitle='" + originalTitle + '\'' +
-                ", genreIds=" + genreIds +
                 ", adult=" + adult +
                 ", overview='" + overview + '\'' +
                 ", releaseDate='" + releaseDate + '\'' +
@@ -192,16 +188,27 @@ public class Movies implements Parcelable {
         dest.writeString(this.posterPath);
         dest.writeString(this.originalLanguage);
         dest.writeString(this.originalTitle);
-        dest.writeList(this.genreIds);
         dest.writeValue(this.adult);
         dest.writeString(this.overview);
         dest.writeString(this.releaseDate);
     }
 
-    public Movies() {
+    public Movies(Integer voteCount, Integer id, Boolean video, Double voteAverage, String title, Double popularity, String posterPath, String originalLanguage, String originalTitle, String overview, String releaseDate) {
+        this.voteCount = voteCount;
+        this.id = id;
+        this.video = video;
+        this.voteAverage = voteAverage;
+        this.title = title;
+        this.popularity = popularity;
+        this.posterPath = posterPath;
+        this.originalLanguage = originalLanguage;
+        this.originalTitle = originalTitle;
+        this.overview = overview;
+        this.releaseDate = releaseDate;
     }
 
-    protected Movies(Parcel in) {
+    @Ignore
+    public Movies(Parcel in) {
         this.voteCount = (Integer) in.readValue(Integer.class.getClassLoader());
         this.id = (Integer) in.readValue(Integer.class.getClassLoader());
         this.video = (Boolean) in.readValue(Boolean.class.getClassLoader());
@@ -211,8 +218,6 @@ public class Movies implements Parcelable {
         this.posterPath = in.readString();
         this.originalLanguage = in.readString();
         this.originalTitle = in.readString();
-        this.genreIds = new ArrayList<>();
-        in.readList(this.genreIds, Integer.class.getClassLoader());
         this.adult = (Boolean) in.readValue(Boolean.class.getClassLoader());
         this.overview = in.readString();
         this.releaseDate = in.readString();
