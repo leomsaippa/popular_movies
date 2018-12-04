@@ -10,4 +10,6 @@
     <string name="poster_description">Poster movies image.</string>
     <string name="generic_error">Something is wrong!</string>
     <string name="try_again">Try again</string>
+    <string name="favorites">Favorites</string>
+    <string name="favorite_selected">Select as favorite!</string>
 </resources>

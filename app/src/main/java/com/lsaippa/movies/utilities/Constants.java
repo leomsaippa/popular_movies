@@ -15,6 +15,8 @@ public interface Constants {
 
     String ENDPOINT_TOP_RATED_MOVIES = "/movie/top_rated";
 
+    String FAVORITE = "favorite";
+
     String IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w185/";
 
     int DEFAULT_SPAN_SIZE = 2;

@@ -1,6 +1,10 @@
 package com.lsaippa.movies;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProvider;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -35,10 +39,12 @@ import com.lsaippa.movies.utilities.JsonParser;
 import com.lsaippa.movies.utilities.NetworkUtils;
 
 import java.net.URL;
+import java.util.List;
 
 import static com.lsaippa.movies.utilities.Constants.DEFAULT_SPAN_SIZE;
 import static com.lsaippa.movies.utilities.Constants.ENDPOINT_POPULAR_MOVIES;
 import static com.lsaippa.movies.utilities.Constants.ENDPOINT_TOP_RATED_MOVIES;
+import static com.lsaippa.movies.utilities.Constants.FAVORITE;
 import static com.lsaippa.movies.utilities.Constants.INITIAL_PAGE;
 import static com.lsaippa.movies.utilities.Constants.MOVIE_TAG;
 
@@ -59,6 +65,7 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
     private Button mButtonTryAgain;
 
     private EndlessRecyclerViewScrollListener scrollListener;
+    private MoviesViewModel moviesViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,6 +95,7 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
         moviesAdapter = new MoviesAdapter(this);
         mRecyclerView.setAdapter(moviesAdapter);
 
+        setupViewModel();
         mButtonTryAgain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -101,11 +109,19 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
                 Log.d(TAG, "onLoad More " + page + "\n Total items: " + totalItemsCount);
                 currentPage = page;
-                loadMovies(currentMovieType, currentPage);
+                if (!currentMovieType.equals(FAVORITE)){
+                    loadMovies(currentMovieType, currentPage);
+                }
             }
         };
 
         mRecyclerView.addOnScrollListener(scrollListener);
+    }
+
+    private void setupViewModel() {
+
+        moviesViewModel = ViewModelProviders.of(this)
+                .get(MoviesViewModel.class);
     }
 
 
@@ -122,8 +138,26 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
             loadMovies(ENDPOINT_POPULAR_MOVIES,INITIAL_PAGE);
         }else if(id == R.id.item_rated){
             loadMovies(ENDPOINT_TOP_RATED_MOVIES,INITIAL_PAGE);
+        }else if(id == R.id.item_favorite){
+            loadFavoriteMovies(FAVORITE);
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void loadFavoriteMovies(final String type) {
+        moviesViewModel.getMovies().observe(this, new Observer<List<Movies>>() {
+            @Override
+            public void onChanged(@Nullable List<Movies> movies) {
+                verifyCurrentType(type);
+                Log.d(TAG,"Movies loadFav " + movies.toString());
+                scrollListener.resetState();
+                moviesAdapter.clear();
+                moviesAdapter.notifyDataSetChanged();
+                moviesAdapter.setMoviesResult(movies);
+                showList();
+                moviesAdapter.notifyDataSetChanged();
+            }
+        });
     }
 
     private void loadMovies(String type, int page) {
@@ -213,4 +247,15 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
         mButtonTryAgain.setVisibility(View.INVISIBLE);
     }
 
+    private void removeObservers() {
+        if ( moviesViewModel != null && moviesViewModel.getMovies().hasObservers()){
+            moviesViewModel.getMovies().removeObservers(this);
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        removeObservers();
+    }
 }
