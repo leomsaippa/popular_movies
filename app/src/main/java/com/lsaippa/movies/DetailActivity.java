@@ -14,7 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.lsaippa.movies.database.AppDatabase;
-import com.lsaippa.movies.model.Movies;
+import com.lsaippa.movies.model.MovieResult;
 import com.lsaippa.movies.utilities.AppExecutors;
 import com.lsaippa.movies.utilities.NetworkUtils;
 import com.squareup.picasso.Picasso;
@@ -27,7 +27,7 @@ import static com.lsaippa.movies.utilities.Constants.MOVIE_TAG;
 public class DetailActivity extends AppCompatActivity {
 
     AppDatabase mDb;
-    Movies movie;
+    MovieResult movie;
     Menu menu;
     boolean isFavorite = false;
     public static final String TAG = DetailActivity.class.getSimpleName();
@@ -65,10 +65,10 @@ public class DetailActivity extends AppCompatActivity {
     private void checkFavoriteMovie(Integer id) {
 
 
-        final LiveData<Movies> movie = mDb.movieDao().getMovies(id);
-        movie.observe(this, new Observer<Movies>() {
+        final LiveData<MovieResult> movie = mDb.movieDao().getMovies(id);
+        movie.observe(this, new Observer<MovieResult>() {
             @Override
-            public void onChanged(@Nullable Movies movieResult) {
+            public void onChanged(@Nullable MovieResult movieResult) {
                 movie.removeObserver(this);
                 isFavorite = movieResult != null;
                 Log.d(TAG,"CheckFavorite " + isFavorite);

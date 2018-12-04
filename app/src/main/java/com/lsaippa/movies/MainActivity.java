@@ -1,7 +1,6 @@
 package com.lsaippa.movies;
 
 import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.support.annotation.Nullable;
@@ -31,7 +30,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
 
-import com.lsaippa.movies.model.Movies;
+import com.lsaippa.movies.model.MovieResponse;
 import com.lsaippa.movies.model.MovieResult;
 
 import com.lsaippa.movies.utilities.EndlessRecyclerViewScrollListener;
@@ -145,11 +144,11 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
     }
 
     private void loadFavoriteMovies(final String type) {
-        moviesViewModel.getMovies().observe(this, new Observer<List<Movies>>() {
+        moviesViewModel.getMovies().observe(this, new Observer<List<MovieResult>>() {
             @Override
-            public void onChanged(@Nullable List<Movies> movies) {
+            public void onChanged(@Nullable List<MovieResult> movies) {
                 verifyCurrentType(type);
-                Log.d(TAG,"Movies loadFav " + movies.toString());
+                Log.d(TAG,"MovieResult loadFav " + movies.toString());
                 scrollListener.resetState();
                 moviesAdapter.clear();
                 moviesAdapter.notifyDataSetChanged();
@@ -174,7 +173,55 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
                 public void onResponse(String response) {
 
                     Log.d(TAG,"onResponse");
-                    MovieResult movies = JsonParser.getMoviesFromJson(response);
+                    MovieResponse movies = JsonParser.getMoviesFromJson(response);
+
+                    moviesAdapter.setMoviesResult(movies.getResults());
+                    showList();
+                    moviesAdapter.notifyDataSetChanged();
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError volleyError) {
+                    Log.d(TAG,"onErrorResponse");
+
+                    if (volleyError instanceof NetworkError) {
+                        showError();
+                    } else if (volleyError instanceof ServerError) {
+                        showError();
+                    } else if (volleyError instanceof AuthFailureError) {
+                        showError();
+                    } else if (volleyError instanceof ParseError) {
+                        showError();
+                    } else if (volleyError instanceof TimeoutError) {
+                        showError();
+                    }else{
+                        Toast.makeText(MainActivity.this, getString(R.string.generic_error), Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+
+            queue.add(stringRequest);
+        }else{
+            verifyCurrentType(type);
+            showError();
+        }
+
+    }
+
+    private void loadMoviesWithId(String type, String id) {
+
+        if(NetworkUtils.isOnline(getApplicationContext())){
+
+            showLoading();
+
+            URL moviesRequestUrl = NetworkUtils.buildIdMovieURL(type, id);
+            RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
+            StringRequest stringRequest = new StringRequest(Request.Method.GET, moviesRequestUrl.toString(), new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+
+                    Log.d(TAG,"onResponse");
+                    MovieResponse movies = JsonParser.getMoviesFromJson(response);
 
                     moviesAdapter.setMoviesResult(movies.getResults());
                     showList();
@@ -219,9 +266,9 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
     }
 
     @Override
-    public void onClick(Movies movies) {
+    public void onClick(MovieResult movieResult) {
         Intent intent = new Intent(MainActivity.this,DetailActivity.class);
-        intent.putExtra(MOVIE_TAG, movies);
+        intent.putExtra(MOVIE_TAG, movieResult);
 
         startActivity(intent);
     }

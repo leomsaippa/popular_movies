@@ -5,10 +5,10 @@ import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
 import android.content.Context;
 
-import com.lsaippa.movies.model.Movies;
+import com.lsaippa.movies.model.MovieResult;
 
 
-@Database(entities = {Movies.class}, version = 1, exportSchema = false)
+@Database(entities = {MovieResult.class}, version = 1, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
 
     public static final String TAG = AppDatabase.class.getSimpleName();
