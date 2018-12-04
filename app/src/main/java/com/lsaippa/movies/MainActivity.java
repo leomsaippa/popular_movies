@@ -33,6 +33,8 @@ import com.android.volley.toolbox.Volley;
 import com.lsaippa.movies.model.MovieResponse;
 import com.lsaippa.movies.model.MovieResult;
 
+import com.lsaippa.movies.model.MovieReviewResponse;
+import com.lsaippa.movies.model.MovieTrailerResponse;
 import com.lsaippa.movies.utilities.EndlessRecyclerViewScrollListener;
 import com.lsaippa.movies.utilities.JsonParser;
 import com.lsaippa.movies.utilities.NetworkUtils;
@@ -42,7 +44,9 @@ import java.util.List;
 
 import static com.lsaippa.movies.utilities.Constants.DEFAULT_SPAN_SIZE;
 import static com.lsaippa.movies.utilities.Constants.ENDPOINT_POPULAR_MOVIES;
+import static com.lsaippa.movies.utilities.Constants.ENDPOINT_REVIEWS;
 import static com.lsaippa.movies.utilities.Constants.ENDPOINT_TOP_RATED_MOVIES;
+import static com.lsaippa.movies.utilities.Constants.ENDPOINT_TRAILERS;
 import static com.lsaippa.movies.utilities.Constants.FAVORITE;
 import static com.lsaippa.movies.utilities.Constants.INITIAL_PAGE;
 import static com.lsaippa.movies.utilities.Constants.MOVIE_TAG;
@@ -208,53 +212,6 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
 
     }
 
-    private void loadMoviesWithId(String type, String id) {
-
-        if(NetworkUtils.isOnline(getApplicationContext())){
-
-            showLoading();
-
-            URL moviesRequestUrl = NetworkUtils.buildIdMovieURL(type, id);
-            RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
-            StringRequest stringRequest = new StringRequest(Request.Method.GET, moviesRequestUrl.toString(), new Response.Listener<String>() {
-                @Override
-                public void onResponse(String response) {
-
-                    Log.d(TAG,"onResponse");
-                    MovieResponse movies = JsonParser.getMoviesFromJson(response);
-
-                    moviesAdapter.setMoviesResult(movies.getResults());
-                    showList();
-                    moviesAdapter.notifyDataSetChanged();
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError volleyError) {
-                    Log.d(TAG,"onErrorResponse");
-
-                    if (volleyError instanceof NetworkError) {
-                        showError();
-                    } else if (volleyError instanceof ServerError) {
-                        showError();
-                    } else if (volleyError instanceof AuthFailureError) {
-                        showError();
-                    } else if (volleyError instanceof ParseError) {
-                        showError();
-                    } else if (volleyError instanceof TimeoutError) {
-                        showError();
-                    }else{
-                        Toast.makeText(MainActivity.this, getString(R.string.generic_error), Toast.LENGTH_SHORT).show();
-                    }
-                }
-            });
-
-            queue.add(stringRequest);
-        }else{
-            verifyCurrentType(type);
-            showError();
-        }
-
-    }
 
     private void verifyCurrentType(String type) {
         if(!currentMovieType.equals(type)){

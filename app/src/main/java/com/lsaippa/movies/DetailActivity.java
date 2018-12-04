@@ -7,24 +7,52 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkError;
+import com.android.volley.ParseError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.ServerError;
+import com.android.volley.TimeoutError;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.lsaippa.movies.database.AppDatabase;
 import com.lsaippa.movies.model.MovieResult;
+import com.lsaippa.movies.model.MovieReviewResponse;
+import com.lsaippa.movies.model.MovieTrailerResponse;
 import com.lsaippa.movies.utilities.AppExecutors;
+import com.lsaippa.movies.utilities.JsonParser;
 import com.lsaippa.movies.utilities.NetworkUtils;
 import com.squareup.picasso.Picasso;
 
 import java.net.URL;
 
+import static com.lsaippa.movies.utilities.Constants.ENDPOINT_REVIEWS;
+import static com.lsaippa.movies.utilities.Constants.ENDPOINT_TRAILERS;
 import static com.lsaippa.movies.utilities.Constants.MOVIE_TAG;
 
 
 public class DetailActivity extends AppCompatActivity {
+
+
+    private RecyclerView mRecyclerView;
+    private TextView mError;
+    private ProgressBar mProgressBar;
+    private Button mButtonTryAgain;
+
 
     AppDatabase mDb;
     MovieResult movie;
@@ -43,6 +71,11 @@ public class DetailActivity extends AppCompatActivity {
         TextView mSynopsisMovie = findViewById(R.id.tv_synopsis);
         ImageView mPosterMovie = findViewById(R.id.iv_poster);
 
+        mRecyclerView = findViewById(R.id.rv_review);
+        mError = findViewById(R.id.tv_error);
+        mProgressBar = findViewById(R.id.pb_loading);
+        mButtonTryAgain = findViewById(R.id.btn_try_again);
+
         mDb = AppDatabase.getInstance(this);
 
         Bundle bundle = getIntent().getExtras();
@@ -58,6 +91,8 @@ public class DetailActivity extends AppCompatActivity {
             mSynopsisMovie.setText(movie.getOverview());
             checkFavoriteMovie(movie.getId());
 
+        loadReviewsMovie(movie.getId().toString());
+        loadTrailersMovie(movie.getId().toString());
         }
 
     }
@@ -136,5 +171,113 @@ public class DetailActivity extends AppCompatActivity {
         });
     }
 
+    private void loadReviewsMovie(String id) {
+
+        if(NetworkUtils.isOnline(getApplicationContext())){
+
+            showLoading();
+
+            URL moviesRequestUrl = NetworkUtils.buildIdMovieURL(ENDPOINT_REVIEWS, id);
+            RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
+            StringRequest stringRequest = new StringRequest(Request.Method.GET, moviesRequestUrl.toString(), new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+
+                    Log.d(TAG,"onResponse");
+                    MovieReviewResponse movies = JsonParser.getMovieReviewResponse(response);
+
+                    Log.d(TAG,"Movies response " + movies.getTotalResults());
+
+                    //moviesAdapter.setMoviesResult(movies.getResults());
+                    //moviesAdapter.notifyDataSetChanged();
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError volleyError) {
+                    Log.d(TAG,"onErrorResponse");
+
+                    if (volleyError instanceof NetworkError) {
+                        showError();
+                    } else if (volleyError instanceof ServerError) {
+                        showError();
+                    } else if (volleyError instanceof AuthFailureError) {
+                        showError();
+                    } else if (volleyError instanceof ParseError) {
+                        showError();
+                    } else if (volleyError instanceof TimeoutError) {
+                        showError();
+                    }else{
+                        Toast.makeText(DetailActivity.this, getString(R.string.generic_error), Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+
+            queue.add(stringRequest);
+        }else{
+            showError();
+        }
+
+    }
+
+    private void loadTrailersMovie(String id) {
+
+        if(NetworkUtils.isOnline(getApplicationContext())){
+
+            showLoading();
+
+            URL moviesRequestUrl = NetworkUtils.buildIdMovieURL(ENDPOINT_TRAILERS, id);
+            RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
+            StringRequest stringRequest = new StringRequest(Request.Method.GET, moviesRequestUrl.toString(), new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+
+                    Log.d(TAG,"onResponse");
+                    MovieTrailerResponse movies = JsonParser.getMovieTrailerResponse(response);
+
+//                    Log.d(TAG,"Movies response " + movies.getResults().get(0));
+                    //moviesAdapter.setMoviesResult(movies.getResults());
+                    //moviesAdapter.notifyDataSetChanged();
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError volleyError) {
+                    Log.d(TAG,"onErrorResponse");
+
+                    if (volleyError instanceof NetworkError) {
+                        showError();
+                    } else if (volleyError instanceof ServerError) {
+                        showError();
+                    } else if (volleyError instanceof AuthFailureError) {
+                        showError();
+                    } else if (volleyError instanceof ParseError) {
+                        showError();
+                    } else if (volleyError instanceof TimeoutError) {
+                        showError();
+                    }else{
+                        Toast.makeText(DetailActivity.this, getString(R.string.generic_error), Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+
+            queue.add(stringRequest);
+        }else{
+            showError();
+        }
+
+    }
+
+
+
+    private void showError(){
+        mError.setVisibility(View.VISIBLE);
+        mProgressBar.setVisibility(View.INVISIBLE);
+        mButtonTryAgain.setVisibility(View.VISIBLE);
+    }
+
+    private void showLoading(){
+        mError.setVisibility(View.INVISIBLE);
+        mProgressBar.setVisibility(View.VISIBLE);
+        mButtonTryAgain.setVisibility(View.INVISIBLE);
+    }
 
 }
