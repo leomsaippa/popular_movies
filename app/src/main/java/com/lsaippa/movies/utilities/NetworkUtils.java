@@ -12,10 +12,14 @@ import java.net.URL;
 
 import static com.lsaippa.movies.utilities.Constants.API_KEY_PARAM;
 import static com.lsaippa.movies.utilities.Constants.ENDPOINT_POPULAR_MOVIES;
+import static com.lsaippa.movies.utilities.Constants.ENDPOINT_REVIEWS;
 import static com.lsaippa.movies.utilities.Constants.ENDPOINT_TOP_RATED_MOVIES;
+import static com.lsaippa.movies.utilities.Constants.ENDPOINT_TRAILERS;
 import static com.lsaippa.movies.utilities.Constants.IMAGE_BASE_URL;
+import static com.lsaippa.movies.utilities.Constants.MOVIE;
 import static com.lsaippa.movies.utilities.Constants.MOVIES_BASE_URL;
 import static com.lsaippa.movies.utilities.Constants.PAGE;
+import static com.lsaippa.movies.utilities.Constants.YOUTUBE_BASE_URL;
 
 
 public class NetworkUtils {
@@ -75,4 +79,36 @@ public class NetworkUtils {
         return url;
     }
 
+    public static URL buildIdMovieURL(String type, String id){
+
+        String endpoint = MOVIES_BASE_URL + MOVIE + id;
+        if(type.equals(ENDPOINT_TRAILERS)){
+            endpoint+=ENDPOINT_TRAILERS;
+        }else if(type.equals(ENDPOINT_REVIEWS)){
+            endpoint+=ENDPOINT_REVIEWS;
+        }
+        Uri builtUri = Uri.parse(endpoint).buildUpon()
+                .appendQueryParameter(API_KEY_PARAM, BuildConfig.API_KEY)
+                .build();
+
+        URL url = null;
+        try {
+            url = new URL(builtUri.toString());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
+
+        Log.d(TAG,"URI "+  builtUri.toString());
+        return url;
+    }
+
+
+
+    public static Uri buildYoutubeURI(String source) {
+        return Uri.parse(YOUTUBE_BASE_URL)
+                .buildUpon()
+                .appendQueryParameter("v", source)
+                .build();
+    }
 }

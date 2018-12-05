@@ -1,7 +1,6 @@
-package com.lsaippa.movies;
+package com.lsaippa.movies.ui;
 
 import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.support.annotation.Nullable;
@@ -31,7 +30,8 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
 
-import com.lsaippa.movies.model.Movies;
+import com.lsaippa.movies.R;
+import com.lsaippa.movies.model.MovieResponse;
 import com.lsaippa.movies.model.MovieResult;
 
 import com.lsaippa.movies.utilities.EndlessRecyclerViewScrollListener;
@@ -51,8 +51,6 @@ import static com.lsaippa.movies.utilities.Constants.MOVIE_TAG;
 public class MainActivity extends AppCompatActivity implements MoviesAdapter.MoviesAdapterOnClickHandler {
 
     private static final String TAG = MainActivity.class.getSimpleName();
-
-    private final String DEFAULT_ORDER_BY_MODE = ENDPOINT_TOP_RATED_MOVIES;
 
     private MoviesAdapter moviesAdapter;
 
@@ -79,7 +77,7 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
 
     private void setup() {
 
-        currentMovieType = DEFAULT_ORDER_BY_MODE;
+        currentMovieType = ENDPOINT_TOP_RATED_MOVIES;
         currentPage = INITIAL_PAGE;
 
         mRecyclerView = findViewById(R.id.rv_moviesList);
@@ -139,17 +137,16 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
         }else if(id == R.id.item_rated){
             loadMovies(ENDPOINT_TOP_RATED_MOVIES,INITIAL_PAGE);
         }else if(id == R.id.item_favorite){
-            loadFavoriteMovies(FAVORITE);
+            loadFavoriteMovies();
         }
         return super.onOptionsItemSelected(item);
     }
 
-    private void loadFavoriteMovies(final String type) {
-        moviesViewModel.getMovies().observe(this, new Observer<List<Movies>>() {
+    private void loadFavoriteMovies() {
+        moviesViewModel.getMovies().observe(this, new Observer<List<MovieResult>>() {
             @Override
-            public void onChanged(@Nullable List<Movies> movies) {
-                verifyCurrentType(type);
-                Log.d(TAG,"Movies loadFav " + movies.toString());
+            public void onChanged(@Nullable List<MovieResult> movies) {
+                verifyCurrentType(FAVORITE);
                 scrollListener.resetState();
                 moviesAdapter.clear();
                 moviesAdapter.notifyDataSetChanged();
@@ -174,7 +171,7 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
                 public void onResponse(String response) {
 
                     Log.d(TAG,"onResponse");
-                    MovieResult movies = JsonParser.getMoviesFromJson(response);
+                    MovieResponse movies = JsonParser.getMoviesFromJson(response);
 
                     moviesAdapter.setMoviesResult(movies.getResults());
                     showList();
@@ -209,6 +206,7 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
 
     }
 
+
     private void verifyCurrentType(String type) {
         if(!currentMovieType.equals(type)){
             currentMovieType = type;
@@ -219,9 +217,9 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
     }
 
     @Override
-    public void onClick(Movies movies) {
+    public void onClick(MovieResult movieResult) {
         Intent intent = new Intent(MainActivity.this,DetailActivity.class);
-        intent.putExtra(MOVIE_TAG, movies);
+        intent.putExtra(MOVIE_TAG, movieResult);
 
         startActivity(intent);
     }

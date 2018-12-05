@@ -1,4 +1,4 @@
-package com.lsaippa.movies;
+package com.lsaippa.movies.ui;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -8,7 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.lsaippa.movies.model.Movies;
+import com.lsaippa.movies.R;
+import com.lsaippa.movies.model.MovieResult;
 import com.lsaippa.movies.utilities.NetworkUtils;
 
 import com.squareup.picasso.Picasso;
@@ -23,28 +24,28 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesAdap
 
     private final MoviesAdapterOnClickHandler mClickHandler;
 
-    private List<Movies> moviesList;
+    private List<MovieResult> movieResultList;
 
-    void setMoviesResult(List<Movies> moviesResult) {
-        if(moviesList != null){
-            this.moviesList.addAll(moviesResult);
+    void setMoviesResult(List<MovieResult> movieResultResult) {
+        if(movieResultList != null){
+            this.movieResultList.addAll(movieResultResult);
 
         }else{
-            this.moviesList = moviesResult;
+            this.movieResultList = movieResultResult;
         }
         notifyDataSetChanged();
     }
 
     void clear(){
-        if(moviesList!=null){
-            moviesList.clear();
+        if(movieResultList !=null){
+            movieResultList.clear();
         }else{
-            Log.d(TAG,"Can't clear. Movies list is null!");
+            Log.d(TAG,"Can't clear. MovieResult list is null!");
         }
     }
 
     public interface MoviesAdapterOnClickHandler{
-        void onClick (Movies movies);
+        void onClick (MovieResult movieResult);
     }
 
     MoviesAdapter(MoviesAdapterOnClickHandler mClickHandler) {
@@ -62,22 +63,22 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesAdap
 
     @Override
     public void onBindViewHolder(@NonNull MoviesAdapterViewHolder holder, int position) {
-        Movies movies = moviesList.get(position);
-        holder.bind(movies.getPosterPath());
+        MovieResult movieResult = movieResultList.get(position);
+        holder.bind(movieResult.getPosterPath());
     }
 
     @Override
     public int getItemCount() {
-        if(moviesList==null){
+        if(movieResultList ==null){
             return 0;
         }
-        return moviesList.size();
+        return movieResultList.size();
     }
 
 
     public class MoviesAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        public final ImageView mIvMovie;
+        final ImageView mIvMovie;
 
         public MoviesAdapterViewHolder(View itemView) {
             super(itemView);
@@ -88,7 +89,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesAdap
         @Override
         public void onClick(View v) {
             Log.d(TAG,"onClick " + getAdapterPosition());
-            mClickHandler.onClick(moviesList.get((getAdapterPosition())));
+            mClickHandler.onClick(movieResultList.get((getAdapterPosition())));
         }
 
         void bind(String poster_path) {
