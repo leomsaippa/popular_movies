@@ -19,6 +19,7 @@ import static com.lsaippa.movies.utilities.Constants.IMAGE_BASE_URL;
 import static com.lsaippa.movies.utilities.Constants.MOVIE;
 import static com.lsaippa.movies.utilities.Constants.MOVIES_BASE_URL;
 import static com.lsaippa.movies.utilities.Constants.PAGE;
+import static com.lsaippa.movies.utilities.Constants.YOUTUBE_BASE_URL;
 
 
 public class NetworkUtils {
@@ -99,8 +100,15 @@ public class NetworkUtils {
 
 
         Log.d(TAG,"URI "+  builtUri.toString());
-
         return url;
     }
 
+
+
+    public static Uri buildYoutubeURI(String source) {
+        return Uri.parse(YOUTUBE_BASE_URL)
+                .buildUpon()
+                .appendQueryParameter("v", source)
+                .build();
+    }
 }

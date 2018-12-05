@@ -2,11 +2,14 @@ package com.lsaippa.movies.ui;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -31,7 +34,6 @@ import com.lsaippa.movies.R;
 import com.lsaippa.movies.database.AppDatabase;
 import com.lsaippa.movies.model.MovieResult;
 import com.lsaippa.movies.model.MovieReviewResponse;
-import com.lsaippa.movies.model.MovieReviewResult;
 import com.lsaippa.movies.model.MovieTrailerResponse;
 import com.lsaippa.movies.utilities.AppExecutors;
 import com.lsaippa.movies.utilities.JsonParser;
@@ -40,18 +42,20 @@ import com.squareup.picasso.Picasso;
 
 import java.net.URL;
 
+import static android.content.Intent.ACTION_VIEW;
 import static com.lsaippa.movies.utilities.Constants.ENDPOINT_REVIEWS;
 import static com.lsaippa.movies.utilities.Constants.ENDPOINT_TRAILERS;
 import static com.lsaippa.movies.utilities.Constants.MOVIE_TAG;
 
 
-public class DetailActivity extends AppCompatActivity implements MoviesReviewAdapter.MoviesReviewAdapterOnClickHandler{
+public class DetailActivity extends AppCompatActivity implements MoviesTrailerAdapter.MoviesTrailerAdapterOnClickHandler{
 
 
-    private RecyclerView mRecyclerView;
-    private TextView mReviewsMovie;
+    private RecyclerView mRvReviews;
+    private RecyclerView mRvTrailers;
 
-    MoviesReviewAdapter mAdapter;
+    MoviesReviewAdapter mReviewAdapter;
+    MoviesTrailerAdapter mTrailerAdapter;
 
 
     AppDatabase mDb;
@@ -71,7 +75,8 @@ public class DetailActivity extends AppCompatActivity implements MoviesReviewAda
         TextView mSynopsisMovie = findViewById(R.id.tv_synopsis);
         ImageView mPosterMovie = findViewById(R.id.iv_poster);
 
-           mRecyclerView = findViewById(R.id.rv_movieReviews);
+        mRvReviews = findViewById(R.id.rv_movieReviews);
+        mRvTrailers = findViewById(R.id.rv_movieTrailers);
 
         mDb = AppDatabase.getInstance(this);
 
@@ -88,17 +93,29 @@ public class DetailActivity extends AppCompatActivity implements MoviesReviewAda
             mSynopsisMovie.setText(movie.getOverview());
             checkFavoriteMovie(movie.getId());
 
-        loadReviewsMovie(movie.getId().toString());
-        loadTrailersMovie(movie.getId().toString());
+            loadReviewsMovie(movie.getId().toString());
+            loadTrailersMovie(movie.getId().toString());
 
             GridLayoutManager layoutManager = new GridLayoutManager(this,1);
-            mRecyclerView.setHasFixedSize(true);
+            GridLayoutManager lm = new GridLayoutManager(this,1);
+            mRvReviews.setHasFixedSize(true);
+            mRvTrailers.setHasFixedSize(true);
 
-            mRecyclerView.setLayoutManager(layoutManager);
+            mRvReviews.setLayoutManager(layoutManager);
+            mRvTrailers.setLayoutManager(lm);
         }
 
-            mAdapter = new MoviesReviewAdapter(this);
-            mRecyclerView.setAdapter(mAdapter);
+        mReviewAdapter = new MoviesReviewAdapter();
+        mTrailerAdapter = new MoviesTrailerAdapter(this);
+
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(mRvTrailers.getContext(),
+                DividerItemDecoration.VERTICAL);
+        dividerItemDecoration.setDrawable((ContextCompat.getDrawable(this, R.drawable.item_divider)));
+
+        mRvTrailers.addItemDecoration(dividerItemDecoration);
+
+        mRvReviews.setAdapter(mReviewAdapter);
+        mRvTrailers.setAdapter(mTrailerAdapter);
 
     }
 
@@ -113,7 +130,7 @@ public class DetailActivity extends AppCompatActivity implements MoviesReviewAda
                 isFavorite = movieResult != null;
                 Log.d(TAG,"CheckFavorite " + isFavorite);
                 if(menu !=null){
-                  updateFavorite(menu.findItem(R.id.favorite_img));
+                    updateFavorite(menu.findItem(R.id.favorite_img));
                 }else{
                     Log.d(TAG,"Update not call, menu null");
                 }
@@ -194,11 +211,9 @@ public class DetailActivity extends AppCompatActivity implements MoviesReviewAda
                     Log.d(TAG,"Movies response " + movies.getTotalResults());
 
 
-                    mAdapter.notifyDataSetChanged();
-                    mAdapter.setMoviesReviewResult(movies.getResults());
+                    mReviewAdapter.notifyDataSetChanged();
+                    mReviewAdapter.setMoviesReviewResult(movies.getResults());
 
-                    //moviesAdapter.setMoviesResult(movies.getResults());
-                    //moviesAdapter.notifyDataSetChanged();
                 }
             }, new Response.ErrorListener() {
                 @Override
@@ -240,12 +255,12 @@ public class DetailActivity extends AppCompatActivity implements MoviesReviewAda
                 @Override
                 public void onResponse(String response) {
 
-                    Log.d(TAG,"onResponse");
-                    MovieTrailerResponse movies = JsonParser.getMovieTrailerResponse(response);
+                    Log.d(TAG,"onResponse trailer " + response );
 
-//                    Log.d(TAG,"Movies response " + movies.getResults().get(0));
-                    //moviesAdapter.setMoviesResult(movies.getResults());
-                    //moviesAdapter.notifyDataSetChanged();
+                    MovieTrailerResponse movies = JsonParser.getMovieTrailerResponse(response);
+                    mTrailerAdapter.notifyDataSetChanged();
+                    mTrailerAdapter.setMoviesTrailerResult(movies.getResults());
+
                 }
             }, new Response.ErrorListener() {
                 @Override
@@ -285,8 +300,17 @@ public class DetailActivity extends AppCompatActivity implements MoviesReviewAda
         Toast.makeText(this, "Loading", Toast.LENGTH_SHORT).show();
     }
 
-    @Override
-    public void onClick(MovieReviewResult movieReviewResult) {
 
+    @Override
+    public void onClick(String source) {
+
+        Intent videoIntent = new Intent();
+        videoIntent.setAction(ACTION_VIEW);
+        videoIntent.setData(NetworkUtils.buildYoutubeURI(source));
+
+        if(videoIntent.resolveActivity(getPackageManager()) != null) {
+            startActivity(videoIntent);
+        }
     }
+
 }

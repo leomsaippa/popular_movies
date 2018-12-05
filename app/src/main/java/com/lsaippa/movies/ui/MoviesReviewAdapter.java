@@ -17,9 +17,6 @@ public class MoviesReviewAdapter extends RecyclerView.Adapter<MoviesReviewAdapte
 
     private static final String TAG = MoviesReviewAdapter.class.getSimpleName();
 
-    private final MoviesReviewAdapterOnClickHandler mClickHandler;
-
-
     private List<MovieReviewResult> movieReviewResults;
 
     void setMoviesReviewResult(List<MovieReviewResult> movieReviewResult) {
@@ -41,13 +38,9 @@ public class MoviesReviewAdapter extends RecyclerView.Adapter<MoviesReviewAdapte
     }
 
 
-    public MoviesReviewAdapter(MoviesReviewAdapterOnClickHandler mClickHandler) {
-        this.mClickHandler = mClickHandler;
+    public MoviesReviewAdapter() {
     }
 
-    public interface MoviesReviewAdapterOnClickHandler{
-        void onClick (MovieReviewResult movieReviewResult);
-    }
 
     public class MoviewsReviewAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
@@ -64,7 +57,6 @@ public class MoviesReviewAdapter extends RecyclerView.Adapter<MoviesReviewAdapte
         @Override
         public void onClick(View v) {
             Log.d(TAG,"onClick " + getAdapterPosition());
-            mClickHandler.onClick(movieReviewResults.get((getAdapterPosition())));
         }
 
         void bind(String author, String content) {

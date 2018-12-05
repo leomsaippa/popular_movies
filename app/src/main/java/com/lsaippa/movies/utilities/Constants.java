@@ -29,6 +29,8 @@ public interface Constants {
 
     int INITIAL_PAGE = 1;
 
+    String YOUTUBE_BASE_URL = "https://www.youtube.com/watch";
+
     String DATE_FORMAT = "M/d/yy hh:mm a";
 
     String MOVIE_TAG = MovieResult.class.getSimpleName();

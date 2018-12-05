@@ -7,15 +7,30 @@ import java.util.List;
 
 public class MovieTrailerResponse {
 
-    @SerializedName("results")
+    @SerializedName("id")
     @Expose
-    private List<MovieTrailerResult> results = null;
+    private Integer id;
+    @SerializedName("quicktime")
+    @Expose
+    private List<String> quicktime;
+    @SerializedName("youtube")
+    private List<MovieTrailerResult> youtube = null;
+    @Expose
+    @SerializedName("total_results")
+    private Integer totalResults;
 
     public List<MovieTrailerResult> getResults() {
-        return results;
+        return youtube;
     }
 
     public void setResults(List<MovieTrailerResult> results) {
-        this.results = results;
+        this.youtube = results;
+    }
+
+    @Override
+    public String toString() {
+        return "MovieTrailerResponse{" +
+                ", results=" + youtube +
+                '}';
     }
 }

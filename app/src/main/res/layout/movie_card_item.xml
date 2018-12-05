@@ -112,6 +112,22 @@
                 android:layout_marginLeft="@dimen/title_margin_left_start"
                 android:layout_marginStart="@dimen/title_margin_left_start"
                 android:layout_marginTop="@dimen/layout_margin_top"
+                android:text="@string/trailers"
+                android:textStyle="bold"
+                android:textSize="@dimen/tv_title_size" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rv_movieTrailers"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/title_margin_left_start"
+                android:layout_marginStart="@dimen/title_margin_left_start"
+                android:layout_marginTop="@dimen/layout_margin_top"
                 android:text="@string/reviews"
                 android:textStyle="bold"
                 android:textSize="@dimen/tv_title_size" />
