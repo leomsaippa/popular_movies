@@ -1,4 +1,4 @@
-package com.lsaippa.movies;
+package com.lsaippa.movies.ui;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
@@ -7,14 +7,12 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,9 +27,11 @@ import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.lsaippa.movies.R;
 import com.lsaippa.movies.database.AppDatabase;
 import com.lsaippa.movies.model.MovieResult;
 import com.lsaippa.movies.model.MovieReviewResponse;
+import com.lsaippa.movies.model.MovieReviewResult;
 import com.lsaippa.movies.model.MovieTrailerResponse;
 import com.lsaippa.movies.utilities.AppExecutors;
 import com.lsaippa.movies.utilities.JsonParser;
@@ -45,13 +45,13 @@ import static com.lsaippa.movies.utilities.Constants.ENDPOINT_TRAILERS;
 import static com.lsaippa.movies.utilities.Constants.MOVIE_TAG;
 
 
-public class DetailActivity extends AppCompatActivity {
+public class DetailActivity extends AppCompatActivity implements MoviesReviewAdapter.MoviesReviewAdapterOnClickHandler{
 
 
     private RecyclerView mRecyclerView;
-    private TextView mError;
-    private ProgressBar mProgressBar;
-    private Button mButtonTryAgain;
+    private TextView mReviewsMovie;
+
+    MoviesReviewAdapter mAdapter;
 
 
     AppDatabase mDb;
@@ -71,10 +71,7 @@ public class DetailActivity extends AppCompatActivity {
         TextView mSynopsisMovie = findViewById(R.id.tv_synopsis);
         ImageView mPosterMovie = findViewById(R.id.iv_poster);
 
-        mRecyclerView = findViewById(R.id.rv_review);
-        mError = findViewById(R.id.tv_error);
-        mProgressBar = findViewById(R.id.pb_loading);
-        mButtonTryAgain = findViewById(R.id.btn_try_again);
+           mRecyclerView = findViewById(R.id.rv_movieReviews);
 
         mDb = AppDatabase.getInstance(this);
 
@@ -93,7 +90,15 @@ public class DetailActivity extends AppCompatActivity {
 
         loadReviewsMovie(movie.getId().toString());
         loadTrailersMovie(movie.getId().toString());
+
+            GridLayoutManager layoutManager = new GridLayoutManager(this,1);
+            mRecyclerView.setHasFixedSize(true);
+
+            mRecyclerView.setLayoutManager(layoutManager);
         }
+
+            mAdapter = new MoviesReviewAdapter(this);
+            mRecyclerView.setAdapter(mAdapter);
 
     }
 
@@ -188,6 +193,10 @@ public class DetailActivity extends AppCompatActivity {
 
                     Log.d(TAG,"Movies response " + movies.getTotalResults());
 
+
+                    mAdapter.notifyDataSetChanged();
+                    mAdapter.setMoviesReviewResult(movies.getResults());
+
                     //moviesAdapter.setMoviesResult(movies.getResults());
                     //moviesAdapter.notifyDataSetChanged();
                 }
@@ -269,15 +278,15 @@ public class DetailActivity extends AppCompatActivity {
 
 
     private void showError(){
-        mError.setVisibility(View.VISIBLE);
-        mProgressBar.setVisibility(View.INVISIBLE);
-        mButtonTryAgain.setVisibility(View.VISIBLE);
+        Toast.makeText(this, "Error", Toast.LENGTH_SHORT).show();
     }
 
     private void showLoading(){
-        mError.setVisibility(View.INVISIBLE);
-        mProgressBar.setVisibility(View.VISIBLE);
-        mButtonTryAgain.setVisibility(View.INVISIBLE);
+        Toast.makeText(this, "Loading", Toast.LENGTH_SHORT).show();
     }
 
+    @Override
+    public void onClick(MovieReviewResult movieReviewResult) {
+
+    }
 }

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -12,6 +12,19 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/iv_poster"
+                android:layout_width="@dimen/iv_detail_width"
+                android:layout_height="@dimen/iv_detail_height"
+                android:contentDescription="@string/poster_description"
+                android:layout_marginBottom="@dimen/iv_detail_margin_bottom"
+                android:layout_marginEnd="@dimen/iv_detail_margin_end"
+                android:layout_marginStart="@dimen/iv_detail_margin_start"
+                android:layout_marginTop="@dimen/iv_detail_margin_top"
+                android:layout_gravity="center"
+                android:layout_marginRight="@dimen/iv_detail_margin_end"
+                android:layout_marginLeft="@dimen/iv_detail_margin_start" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -92,6 +105,25 @@
                 android:layout_marginLeft="@dimen/tv_attribute_margin_left_start"
                 android:layout_marginStart="@dimen/tv_attribute_margin_left_start"/>
 
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/title_margin_left_start"
+                android:layout_marginStart="@dimen/title_margin_left_start"
+                android:layout_marginTop="@dimen/layout_margin_top"
+                android:text="@string/reviews"
+                android:textStyle="bold"
+                android:textSize="@dimen/tv_title_size" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rv_movieReviews"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+
+
         </LinearLayout>
+
     </ScrollView>
 </android.support.v7.widget.CardView>

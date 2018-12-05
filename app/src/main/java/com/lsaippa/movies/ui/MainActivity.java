@@ -1,4 +1,4 @@
-package com.lsaippa.movies;
+package com.lsaippa.movies.ui;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
@@ -30,11 +30,10 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
 
+import com.lsaippa.movies.R;
 import com.lsaippa.movies.model.MovieResponse;
 import com.lsaippa.movies.model.MovieResult;
 
-import com.lsaippa.movies.model.MovieReviewResponse;
-import com.lsaippa.movies.model.MovieTrailerResponse;
 import com.lsaippa.movies.utilities.EndlessRecyclerViewScrollListener;
 import com.lsaippa.movies.utilities.JsonParser;
 import com.lsaippa.movies.utilities.NetworkUtils;
@@ -44,9 +43,7 @@ import java.util.List;
 
 import static com.lsaippa.movies.utilities.Constants.DEFAULT_SPAN_SIZE;
 import static com.lsaippa.movies.utilities.Constants.ENDPOINT_POPULAR_MOVIES;
-import static com.lsaippa.movies.utilities.Constants.ENDPOINT_REVIEWS;
 import static com.lsaippa.movies.utilities.Constants.ENDPOINT_TOP_RATED_MOVIES;
-import static com.lsaippa.movies.utilities.Constants.ENDPOINT_TRAILERS;
 import static com.lsaippa.movies.utilities.Constants.FAVORITE;
 import static com.lsaippa.movies.utilities.Constants.INITIAL_PAGE;
 import static com.lsaippa.movies.utilities.Constants.MOVIE_TAG;
@@ -155,8 +152,6 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
                 Log.d(TAG,"MovieResult loadFav " + movies.toString());
                 scrollListener.resetState();
                 moviesAdapter.clear();
-                moviesAdapter.notifyDataSetChanged();
-                moviesAdapter.setMoviesResult(movies);
                 showList();
                 moviesAdapter.notifyDataSetChanged();
             }

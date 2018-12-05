@@ -1,4 +1,4 @@
-package com.lsaippa.movies;
+package com.lsaippa.movies.ui;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.lsaippa.movies.R;
 import com.lsaippa.movies.model.MovieResult;
 import com.lsaippa.movies.utilities.NetworkUtils;
 

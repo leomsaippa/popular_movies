@@ -1,4 +1,4 @@
-package com.lsaippa.movies;
+package com.lsaippa.movies.ui;
 
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
@@ -10,9 +10,6 @@ import com.lsaippa.movies.model.MovieResult;
 
 import java.util.List;
 
-/**
- * Created by lsaippa on 02/12/18.
- */
 
 public class MoviesViewModel extends AndroidViewModel {
 
