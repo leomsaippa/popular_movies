@@ -152,6 +152,8 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
                 Log.d(TAG,"MovieResult loadFav " + movies.toString());
                 scrollListener.resetState();
                 moviesAdapter.clear();
+                moviesAdapter.notifyDataSetChanged();
+                moviesAdapter.setMoviesResult(movies);
                 showList();
                 moviesAdapter.notifyDataSetChanged();
             }
