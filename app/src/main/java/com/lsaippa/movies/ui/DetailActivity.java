@@ -51,11 +51,10 @@ import static com.lsaippa.movies.utilities.Constants.MOVIE_TAG;
 public class DetailActivity extends AppCompatActivity implements MoviesTrailerAdapter.MoviesTrailerAdapterOnClickHandler{
 
 
-    private RecyclerView mRvReviews;
     private RecyclerView mRvTrailers;
 
-    MoviesReviewAdapter mReviewAdapter;
-    MoviesTrailerAdapter mTrailerAdapter;
+    private MoviesReviewAdapter mReviewAdapter;
+    private MoviesTrailerAdapter mTrailerAdapter;
 
 
     AppDatabase mDb;
@@ -75,7 +74,7 @@ public class DetailActivity extends AppCompatActivity implements MoviesTrailerAd
         TextView mSynopsisMovie = findViewById(R.id.tv_synopsis);
         ImageView mPosterMovie = findViewById(R.id.iv_poster);
 
-        mRvReviews = findViewById(R.id.rv_movieReviews);
+        RecyclerView mRvReviews = findViewById(R.id.rv_movieReviews);
         mRvTrailers = findViewById(R.id.rv_movieTrailers);
 
         mDb = AppDatabase.getInstance(this);
@@ -197,8 +196,6 @@ public class DetailActivity extends AppCompatActivity implements MoviesTrailerAd
 
         if(NetworkUtils.isOnline(getApplicationContext())){
 
-            showLoading();
-
             URL moviesRequestUrl = NetworkUtils.buildIdMovieURL(ENDPOINT_REVIEWS, id);
             RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
             StringRequest stringRequest = new StringRequest(Request.Method.GET, moviesRequestUrl.toString(), new Response.Listener<String>() {
@@ -247,7 +244,6 @@ public class DetailActivity extends AppCompatActivity implements MoviesTrailerAd
 
         if(NetworkUtils.isOnline(getApplicationContext())){
 
-            showLoading();
 
             URL moviesRequestUrl = NetworkUtils.buildIdMovieURL(ENDPOINT_TRAILERS, id);
             RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
@@ -291,16 +287,9 @@ public class DetailActivity extends AppCompatActivity implements MoviesTrailerAd
     }
 
 
-
     private void showError(){
-        Toast.makeText(this, "Error", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, R.string.something_wrong, Toast.LENGTH_SHORT).show();
     }
-
-    private void showLoading(){
-        Toast.makeText(this, "Loading", Toast.LENGTH_SHORT).show();
-    }
-
-
     @Override
     public void onClick(String source) {
 

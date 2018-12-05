@@ -52,8 +52,6 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
-    private final String DEFAULT_ORDER_BY_MODE = ENDPOINT_TOP_RATED_MOVIES;
-
     private MoviesAdapter moviesAdapter;
 
     private String currentMovieType;
@@ -79,7 +77,7 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
 
     private void setup() {
 
-        currentMovieType = DEFAULT_ORDER_BY_MODE;
+        currentMovieType = ENDPOINT_TOP_RATED_MOVIES;
         currentPage = INITIAL_PAGE;
 
         mRecyclerView = findViewById(R.id.rv_moviesList);
@@ -139,17 +137,16 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
         }else if(id == R.id.item_rated){
             loadMovies(ENDPOINT_TOP_RATED_MOVIES,INITIAL_PAGE);
         }else if(id == R.id.item_favorite){
-            loadFavoriteMovies(FAVORITE);
+            loadFavoriteMovies();
         }
         return super.onOptionsItemSelected(item);
     }
 
-    private void loadFavoriteMovies(final String type) {
+    private void loadFavoriteMovies() {
         moviesViewModel.getMovies().observe(this, new Observer<List<MovieResult>>() {
             @Override
             public void onChanged(@Nullable List<MovieResult> movies) {
-                verifyCurrentType(type);
-                Log.d(TAG,"MovieResult loadFav " + movies.toString());
+                verifyCurrentType(FAVORITE);
                 scrollListener.resetState();
                 moviesAdapter.clear();
                 moviesAdapter.notifyDataSetChanged();

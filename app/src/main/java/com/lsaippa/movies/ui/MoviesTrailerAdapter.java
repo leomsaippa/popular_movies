@@ -52,7 +52,7 @@ public class MoviesTrailerAdapter extends RecyclerView.Adapter<MoviesTrailerAdap
     public class MoviesTrailerAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
 
-        public final TextView mTrailer;
+        final TextView mTrailer;
 
         public MoviesTrailerAdapterViewHolder(View itemView) {
             super(itemView);

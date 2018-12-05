@@ -22,6 +22,7 @@ public class MovieReviewResult {
         return author;
     }
 
+    @SuppressWarnings("unused")
     public void setAuthor(String author) {
         this.author = author;
     }
@@ -30,22 +31,27 @@ public class MovieReviewResult {
         return content;
     }
 
+    @SuppressWarnings("unused")
     public void setContent(String content) {
         this.content = content;
     }
 
+    @SuppressWarnings("unused")
     public String getId() {
         return id;
     }
 
+    @SuppressWarnings("unused")
     public void setId(String id) {
         this.id = id;
     }
 
+    @SuppressWarnings("unused")
     public String getUrl() {
         return url;
     }
 
+    @SuppressWarnings("unused")
     public void setUrl(String url) {
         this.url = url;
     }

@@ -30,6 +30,7 @@ import java.util.concurrent.Executors;
  * Grouping tasks like this avoids the effects of task starvation (e.g. disk reads don't wait behind
  * webservice requests).
  */
+@SuppressWarnings("unused")
 public class AppExecutors {
 
     // For Singleton instantiation
@@ -69,6 +70,7 @@ public class AppExecutors {
     }
 
     private static class MainThreadExecutor implements Executor {
+        @SuppressWarnings("CanBeFinal")
         private Handler mainThreadHandler = new Handler(Looper.getMainLooper());
 
         @Override

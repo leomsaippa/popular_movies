@@ -13,7 +13,7 @@ import com.lsaippa.movies.model.MovieReviewResult;
 import java.util.List;
 
 
-public class MoviesReviewAdapter extends RecyclerView.Adapter<MoviesReviewAdapter.MoviewsReviewAdapterViewHolder>{
+public class MoviesReviewAdapter extends RecyclerView.Adapter<MoviesReviewAdapter.MoviesReviewAdapterViewHolder>{
 
     private static final String TAG = MoviesReviewAdapter.class.getSimpleName();
 
@@ -42,12 +42,12 @@ public class MoviesReviewAdapter extends RecyclerView.Adapter<MoviesReviewAdapte
     }
 
 
-    public class MoviewsReviewAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class MoviesReviewAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        public final TextView mReviewAuthor;
+        final TextView mReviewAuthor;
         public final TextView mReviewContent;
 
-        public MoviewsReviewAdapterViewHolder(View itemView) {
+        public MoviesReviewAdapterViewHolder(View itemView) {
             super(itemView);
             mReviewAuthor = itemView.findViewById(R.id.tv_authors);
             mReviewContent = itemView.findViewById(R.id.tv_contents);
@@ -66,14 +66,14 @@ public class MoviesReviewAdapter extends RecyclerView.Adapter<MoviesReviewAdapte
     }
     @NonNull
     @Override
-    public MoviewsReviewAdapterViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public MoviesReviewAdapterViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View view = inflater.inflate(R.layout.movie_review_card_item,parent, false);
-        return new MoviewsReviewAdapterViewHolder(view);
+        return new MoviesReviewAdapterViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MoviewsReviewAdapterViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull MoviesReviewAdapterViewHolder holder, int position) {
         MovieReviewResult movieReviewResult = movieReviewResults.get(position);
         holder.bind(movieReviewResult.getAuthor(), movieReviewResult.getContent());
     }

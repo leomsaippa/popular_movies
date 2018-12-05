@@ -11,7 +11,6 @@ import com.lsaippa.movies.model.MovieResult;
 @Database(entities = {MovieResult.class}, version = 1, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
 
-    public static final String TAG = AppDatabase.class.getSimpleName();
     private static final Object LOCK = new Object();
     private static final String DATABASE_NAME = "movie";
     private static AppDatabase instance;
