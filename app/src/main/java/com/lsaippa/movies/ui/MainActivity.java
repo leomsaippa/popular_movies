@@ -3,6 +3,8 @@ package com.lsaippa.movies.ui;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
+import android.os.Parcelable;
+import android.os.PersistableBundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -39,6 +41,7 @@ import com.lsaippa.movies.utilities.JsonParser;
 import com.lsaippa.movies.utilities.NetworkUtils;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.lsaippa.movies.utilities.Constants.DEFAULT_SPAN_SIZE;
@@ -51,6 +54,9 @@ import static com.lsaippa.movies.utilities.Constants.MOVIE_TAG;
 public class MainActivity extends AppCompatActivity implements MoviesAdapter.MoviesAdapterOnClickHandler {
 
     private static final String TAG = MainActivity.class.getSimpleName();
+    private static final String SAVED_LAYOUT_MANAGER = "SAVED_LAYOUT_MANAGER";
+    private static final String SAVED_RECYCLER_VIEW_STATUS_ID = "SAVED_RECYCLER_VIEW_STATUS_ID";
+    private static final String SAVED_RECYCLER_VIEW_DATASET_ID = "SAVED_RECYCLER_VIEW_DATASET_ID";
 
     private MoviesAdapter moviesAdapter;
 
@@ -65,6 +71,7 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
     private EndlessRecyclerViewScrollListener scrollListener;
     private MoviesViewModel moviesViewModel;
 
+    GridLayoutManager layoutManager;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,7 +79,12 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
 
         setup();
 
-        loadMovies(currentMovieType, currentPage);
+        if(savedInstanceState == null){
+
+            loadMovies(currentMovieType, currentPage);
+        } else {
+            setMovies(moviesAdapter.getSavedMovies());
+        }
     }
 
     private void setup() {
@@ -85,7 +97,7 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
         mProgressBar = findViewById(R.id.pb_loading);
         mButtonTryAgain = findViewById(R.id.btn_try_again);
 
-        GridLayoutManager layoutManager = new GridLayoutManager(this,DEFAULT_SPAN_SIZE);
+        layoutManager = new GridLayoutManager(this,DEFAULT_SPAN_SIZE);
         mRecyclerView.setHasFixedSize(true);
 
         mRecyclerView.setLayoutManager(layoutManager);
@@ -115,6 +127,33 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
 
         mRecyclerView.addOnScrollListener(scrollListener);
     }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable(SAVED_LAYOUT_MANAGER,mRecyclerView.getLayoutManager().onSaveInstanceState());
+    }
+
+    Parcelable savedRecyclerLayoutState ;
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        savedRecyclerLayoutState = savedInstanceState.getParcelable(SAVED_LAYOUT_MANAGER);
+        super.onRestoreInstanceState(savedInstanceState);
+    }
+
+
+    public void setMovies(List<MovieResult> movies){
+        moviesAdapter.setMoviesResult(movies);
+        restoreLayoutManagerPosition();
+    }
+
+    Parcelable layoutManagerSavedState;
+    private void restoreLayoutManagerPosition() {
+        if (layoutManagerSavedState != null) {
+            mRecyclerView.getLayoutManager().onRestoreInstanceState(layoutManagerSavedState);
+        }
+    }
+
 
     private void setupViewModel() {
 
