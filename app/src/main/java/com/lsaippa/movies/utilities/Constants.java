@@ -29,6 +29,12 @@ public interface Constants {
 
     int INITIAL_PAGE = 1;
 
+    String CURRENT_MOVIE_TYPE_KEY = "currentMovieType";
+
+    String CURRENT_MOVIE_PAGE_KEY = "currentMoviePage";
+
+    String CURRENT_MOVIES_RESULTS_KEY = "currentMoviesResults";
+
     String YOUTUBE_BASE_URL = "https://www.youtube.com/watch";
 
     String DATE_FORMAT = "M/d/yy hh:mm a";

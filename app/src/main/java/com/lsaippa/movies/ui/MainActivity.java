@@ -3,8 +3,6 @@ package com.lsaippa.movies.ui;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
-import android.os.Parcelable;
-import android.os.PersistableBundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -44,6 +42,9 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.lsaippa.movies.utilities.Constants.CURRENT_MOVIES_RESULTS_KEY;
+import static com.lsaippa.movies.utilities.Constants.CURRENT_MOVIE_PAGE_KEY;
+import static com.lsaippa.movies.utilities.Constants.CURRENT_MOVIE_TYPE_KEY;
 import static com.lsaippa.movies.utilities.Constants.DEFAULT_SPAN_SIZE;
 import static com.lsaippa.movies.utilities.Constants.ENDPOINT_POPULAR_MOVIES;
 import static com.lsaippa.movies.utilities.Constants.ENDPOINT_TOP_RATED_MOVIES;
@@ -54,9 +55,7 @@ import static com.lsaippa.movies.utilities.Constants.MOVIE_TAG;
 public class MainActivity extends AppCompatActivity implements MoviesAdapter.MoviesAdapterOnClickHandler {
 
     private static final String TAG = MainActivity.class.getSimpleName();
-    private static final String SAVED_LAYOUT_MANAGER = "SAVED_LAYOUT_MANAGER";
-    private static final String SAVED_RECYCLER_VIEW_STATUS_ID = "SAVED_RECYCLER_VIEW_STATUS_ID";
-    private static final String SAVED_RECYCLER_VIEW_DATASET_ID = "SAVED_RECYCLER_VIEW_DATASET_ID";
+    ArrayList<MovieResult> movieResult = new ArrayList<>();
 
     private MoviesAdapter moviesAdapter;
 
@@ -76,21 +75,24 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         setup();
 
-        if(savedInstanceState == null){
-
+        if(savedInstanceState != null){
+            currentMovieType = savedInstanceState.getString(CURRENT_MOVIE_TYPE_KEY);
+            currentPage = savedInstanceState.getInt(CURRENT_MOVIE_PAGE_KEY);
+            movieResult = savedInstanceState.getParcelableArrayList(CURRENT_MOVIES_RESULTS_KEY);
+            setMovies(movieResult);
+        }else{
+            currentMovieType = ENDPOINT_TOP_RATED_MOVIES;
+            currentPage = INITIAL_PAGE;
             loadMovies(currentMovieType, currentPage);
-        } else {
-            setMovies(moviesAdapter.getSavedMovies());
+
         }
+
     }
 
     private void setup() {
 
-        currentMovieType = ENDPOINT_TOP_RATED_MOVIES;
-        currentPage = INITIAL_PAGE;
 
         mRecyclerView = findViewById(R.id.rv_moviesList);
         mError = findViewById(R.id.tv_error);
@@ -131,28 +133,17 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelable(SAVED_LAYOUT_MANAGER,mRecyclerView.getLayoutManager().onSaveInstanceState());
-    }
-
-    Parcelable savedRecyclerLayoutState ;
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        savedRecyclerLayoutState = savedInstanceState.getParcelable(SAVED_LAYOUT_MANAGER);
-        super.onRestoreInstanceState(savedInstanceState);
+        outState.putString(CURRENT_MOVIE_TYPE_KEY, currentMovieType);
+        outState.putInt(CURRENT_MOVIE_PAGE_KEY, currentPage);
+        outState.putParcelableArrayList(CURRENT_MOVIES_RESULTS_KEY, movieResult);
     }
 
 
     public void setMovies(List<MovieResult> movies){
         moviesAdapter.setMoviesResult(movies);
-        restoreLayoutManagerPosition();
+        moviesAdapter.notifyDataSetChanged();
     }
 
-    Parcelable layoutManagerSavedState;
-    private void restoreLayoutManagerPosition() {
-        if (layoutManagerSavedState != null) {
-            mRecyclerView.getLayoutManager().onRestoreInstanceState(layoutManagerSavedState);
-        }
-    }
 
 
     private void setupViewModel() {
@@ -212,6 +203,7 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
                     Log.d(TAG,"onResponse");
                     MovieResponse movies = JsonParser.getMoviesFromJson(response);
 
+                    movieResult.addAll(movies.getResults());
                     moviesAdapter.setMoviesResult(movies.getResults());
                     showList();
                     moviesAdapter.notifyDataSetChanged();
