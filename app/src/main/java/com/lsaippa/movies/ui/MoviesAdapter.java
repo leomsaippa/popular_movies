@@ -1,5 +1,6 @@
 package com.lsaippa.movies.ui;
 
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -15,6 +16,7 @@ import com.lsaippa.movies.utilities.NetworkUtils;
 import com.squareup.picasso.Picasso;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -42,6 +44,10 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesAdap
         }else{
             Log.d(TAG,"Can't clear. MovieResult list is null!");
         }
+    }
+
+    public ArrayList<MovieResult> getSavedMovies() {
+        return (ArrayList<MovieResult>) movieResultList;
     }
 
     public interface MoviesAdapterOnClickHandler{

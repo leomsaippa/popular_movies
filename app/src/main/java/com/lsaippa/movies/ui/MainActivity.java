@@ -39,8 +39,12 @@ import com.lsaippa.movies.utilities.JsonParser;
 import com.lsaippa.movies.utilities.NetworkUtils;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
+import static com.lsaippa.movies.utilities.Constants.CURRENT_MOVIES_RESULTS_KEY;
+import static com.lsaippa.movies.utilities.Constants.CURRENT_MOVIE_PAGE_KEY;
+import static com.lsaippa.movies.utilities.Constants.CURRENT_MOVIE_TYPE_KEY;
 import static com.lsaippa.movies.utilities.Constants.DEFAULT_SPAN_SIZE;
 import static com.lsaippa.movies.utilities.Constants.ENDPOINT_POPULAR_MOVIES;
 import static com.lsaippa.movies.utilities.Constants.ENDPOINT_TOP_RATED_MOVIES;
@@ -51,6 +55,7 @@ import static com.lsaippa.movies.utilities.Constants.MOVIE_TAG;
 public class MainActivity extends AppCompatActivity implements MoviesAdapter.MoviesAdapterOnClickHandler {
 
     private static final String TAG = MainActivity.class.getSimpleName();
+    ArrayList<MovieResult> movieResult = new ArrayList<>();
 
     private MoviesAdapter moviesAdapter;
 
@@ -65,27 +70,36 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
     private EndlessRecyclerViewScrollListener scrollListener;
     private MoviesViewModel moviesViewModel;
 
+    GridLayoutManager layoutManager;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         setup();
 
-        loadMovies(currentMovieType, currentPage);
+        if(savedInstanceState != null){
+            currentMovieType = savedInstanceState.getString(CURRENT_MOVIE_TYPE_KEY);
+            currentPage = savedInstanceState.getInt(CURRENT_MOVIE_PAGE_KEY);
+            movieResult = savedInstanceState.getParcelableArrayList(CURRENT_MOVIES_RESULTS_KEY);
+            setMovies(movieResult);
+        }else{
+            currentMovieType = ENDPOINT_TOP_RATED_MOVIES;
+            currentPage = INITIAL_PAGE;
+            loadMovies(currentMovieType, currentPage);
+
+        }
+
     }
 
     private void setup() {
 
-        currentMovieType = ENDPOINT_TOP_RATED_MOVIES;
-        currentPage = INITIAL_PAGE;
 
         mRecyclerView = findViewById(R.id.rv_moviesList);
         mError = findViewById(R.id.tv_error);
         mProgressBar = findViewById(R.id.pb_loading);
         mButtonTryAgain = findViewById(R.id.btn_try_again);
 
-        GridLayoutManager layoutManager = new GridLayoutManager(this,DEFAULT_SPAN_SIZE);
+        layoutManager = new GridLayoutManager(this,DEFAULT_SPAN_SIZE);
         mRecyclerView.setHasFixedSize(true);
 
         mRecyclerView.setLayoutManager(layoutManager);
@@ -115,6 +129,22 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
 
         mRecyclerView.addOnScrollListener(scrollListener);
     }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(CURRENT_MOVIE_TYPE_KEY, currentMovieType);
+        outState.putInt(CURRENT_MOVIE_PAGE_KEY, currentPage);
+        outState.putParcelableArrayList(CURRENT_MOVIES_RESULTS_KEY, movieResult);
+    }
+
+
+    public void setMovies(List<MovieResult> movies){
+        moviesAdapter.setMoviesResult(movies);
+        moviesAdapter.notifyDataSetChanged();
+    }
+
+
 
     private void setupViewModel() {
 
@@ -173,6 +203,7 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
                     Log.d(TAG,"onResponse");
                     MovieResponse movies = JsonParser.getMoviesFromJson(response);
 
+                    movieResult.addAll(movies.getResults());
                     moviesAdapter.setMoviesResult(movies.getResults());
                     showList();
                     moviesAdapter.notifyDataSetChanged();
